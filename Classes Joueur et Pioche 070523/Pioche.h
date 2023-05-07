@@ -72,19 +72,3 @@ class PiocheTactique{
 
 
 
-
-
-
-
-/*
-    const Carte& piocher(Joueur j){
-        int randNum = rand()%(nbCartesRestantes) + nbCartesRestantes;
-        nbCartesRestantes-=1;
-        j.nbCartes+=1;
-        auto* newCarte = new CarteClan(CartesCl[i].getcouleur(),CartesCl[i].getnombre() );
-        j.cartesJoueurClan.push_back(newCarte);
-        CartesCl.pop_back(CartesCl[i]);
-    };
-
-*/
-
