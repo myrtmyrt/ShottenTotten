@@ -24,17 +24,6 @@ void Borne::retirer(const Carte& c) {
 		}
 		nb_carte1--;
 	}
-	else if (joueur1 == 2) 
-		// On cherche la carte correspondante
-		while (i < nb_carte2 && liste_carte2[i] != &c) i++;
-		if (i == nb_carte2) throw "Carte inexistante";
-		// On fait le décalage pour supprimer la carte
-		i++;
-		while (i < nb_carte2) {
-			liste_carte2[i - 1] = liste_carte2[i];
-			i++;
-		}
-		nb_carte2--;
 }
 		
 
@@ -71,29 +60,6 @@ void Borne::ajouter(const Carte& c) {
 
 		nb_carte1++;
 	}
-
-	if (joueur2 == 2) {
-		// Si le tableau est rempli,on ne pourra plus ajouter une carte 
-		if (nb_carte2 == nb_max) throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
-		//sinon
-		const Carte** newtab = new const Carte * [nb_carte2 + 1];
-		// On recopie les valeurs dans le nouveau tableau
-		for (size_t i = 0; i < nb_carte2; i++) newtab[i] = liste_carte2[i];
-		// Le nouveau tableau devient le tableau du Plateau
-
-			// On pense à désallouer l'ancien tableau
-
-		auto old = liste_carte2;
-		liste_carte2 = newtab;
-		delete[] old;
-
-		// On ajoute la carte
-		liste_carte2[nb_carte2++] = &c;
-
-		nb_carte2++;
-
-	}
-
 }
 
 

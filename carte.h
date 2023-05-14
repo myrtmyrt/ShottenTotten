@@ -1,59 +1,74 @@
 //
-// Created by Arman Saint-Marc on 06/05/2023.
+// Created by Myrtille Knockaert on 26/04/2023.
 //
 
-#ifndef CARTE
-#define CARTE
+#ifndef PROJET_CARTE_H
+#define PROJET_CARTE_H
 
-#include <iostream>
+using namespace std;
 
-enum class Couleur { rouge, bleu, vert, violet, orange, jaune};
-enum class Nombre { un=1, deux=2, trois=3, quatre=4, cinq=5, six=6, sept=7, huit=8, neuf=9};
-enum class TypeTactique{joker,espion,porteBouclier,colinMaillard,combatBoue,chasseurTete,stratege,banshee,traitre};
+// classe pour gérer les exceptions
+class CarteException {
+public:
+    CarteException(const string& i) :info(i) {}
+    string getInfo() const { return info; }
+private:
+    string info;
+};
+
+enum class Couleur {Rouge,Bleu, Vert, Violet, Orange, Jaune};
+enum class Nombre {Un=1, Deux=2, Trois=3, Quatre=4, Cinq=5, Six=6, Sept=7, Huit=8, Neuf=9};
+enum class TypeTactique{Joker,Espion,PorteBouclier,ColinMaillard,CombatBoue,ChasseurTete,Stratege,Banshee,Traitre};
+
+class Carte{
+
+};
+
+class CarteClan: Carte{
+private:
+    // Un attribut par caractéristique
+    // On utilise les types enum
+    Couleur couleur;
+    Nombre nombre;
+public:
+    // Accesseurs en lecture
+    Couleur getCouleur() const { return couleur;}
+    Nombre getNombre() const { return nombre; }
+
+    // Constructeur à 2 paramètres
+    CarteClan(Couleur c, Nombre n) : couleur(c), nombre(n){};
+    // Destructeur
+    ~CarteClan() = default; // optionnel
+    // Constructeur par recopie
+    CarteClan(const CarteClan& c) = default; // optionnel
+    // Opérateur d'affectation
+    CarteClan& operator=(const CarteClan& c) = default; // optionnel
+};
+
+class CarteTactique: Carte{
+private:
+    TypeTactique type;
+    void (*effet)();
+public:
+    CarteTactique(TypeTactique t,void(*e)()):type(t),effet(e){};
+    void execEffet(){effet();};
+};
+
+
+// conversion d'une caractéristique en string
+string toString(Couleur c);
+string toString(Nombre v);
+
+// écriture d'une caractéristique sur un flux ostream
+ostream& operator<<(ostream& f, Couleur c);
+ostream& operator<<(ostream& f, Nombre v);
 
 // listes contenant les valeurs possibles pour chacune des caractéristiques
 extern std::initializer_list<Couleur> Couleurs;
 extern std::initializer_list<Nombre> Nombres;
 
+// affichage des valeurs possibles pour chaque caractéristiques
+void printCouleurs(std::ostream& f = cout);
+void printNombres(std::ostream& f = cout);
 
-// Abstract base class for cards
-class Carte {
-
-public:
-    virtual void play() = 0;
-};
-
-// Concrete card classes
-class Clan : public Carte {
-    Nombre _numero;
-    Couleur _couleur;
-public:
-    Clan(Nombre numero, Couleur couleur) : Carte(), _numero(numero), _couleur(couleur) {};
-    void play() override {
-        std::cout << "Playing an attack card." << std::endl;
-    }
-};
-
-class Tactique : public Carte {
-    TypeTactique type;
-    void (*effet)();
-public:
-    Tactique(TypeTactique type,void(*e)()):Carte(),type(type),effet(e) {};
-
-    static void jouerJoker(){
-        std::cout << "Playing a joker defense card." << std::endl;
-    }
-
-    static void jouerEspion(){
-        std::cout << "Playing a espion defense card." << std::endl;
-    }
-
-    void play() override {
-        effet();
-    }
-};
-
-
-
-
-#endif //CARTE
+#endif //PROJET_CARTE_H

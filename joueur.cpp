@@ -3,6 +3,7 @@
 //
 
 #include "joueur.h"
+#include "pioche.h"
 
 Joueur::Joueur(bool bot, bool tactique, const Manche& manche, std::string pseudo){
     _pseudo = pseudo;
