@@ -16,7 +16,9 @@ private:
 class Borne {
 private:
     bool _gagne;
-    size_t _nb_cartes=3;
+    size_t _nb_cartesMax=3;
+    size_t _nb_cartes1=0;
+    size_t _nb_cartes2=0;
 	const Carte** liste_carte1 = nullptr;
 	const Carte** liste_carte2 = nullptr;
 

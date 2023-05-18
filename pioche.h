@@ -6,64 +6,70 @@
 #define PROJET_PIOCHE_H
 
 #include <iostream>
-#include <vector>
+#include <list>
 #include <algorithm>
 #include <random>
+#include <functional>
+#include <iterator>
+#include <string>
+#include <list>
+#include <vector>
 
 #include "carte.h"
 
 using namespace std;
 
-class StrategiePioche{
+class StrategiePioche {
 protected:
     const size_t _nbCartes;
-    vector<Carte*> _Cartes;
+    vector<Carte> _Cartes;
 public:
-    StrategiePioche(vector <Carte*> c):_Cartes(c),_nbCartes(64){}
+    StrategiePioche(vector<Carte> c) : _Cartes(c), _nbCartes(64) {} //Constructeur
+    size_t getNbMax() const { return _nbCartes; }
 
-    StrategiePioche() {};
-    size_t getNbMax()const { return _nbCartes;}
-    virtual size_t getNbcarte() const { return _Cartes.size();}
-    virtual bool estVide() const=0;
-    virtual Carte* piocher() =0;
+    virtual size_t getNbcarte() const { return _Cartes.size(); }
+
+    virtual bool estVide() const = 0;
+
+    virtual Carte piocher() = 0;
 };
 
 
-class StrategiePiocheClan: public StrategiePioche{
+class StrategiePiocheClan : public StrategiePioche {
 private:
 public:
     //méthodes
+    StrategiePiocheClan(vector<Carte> c) : StrategiePioche(c) {}; //constructeur
+    bool estVide() const override { return _Cartes.size() == 0; }
 
-    bool estVide() const override{ return _Cartes.size() == 0;}
-    Carte* piocher() override{
-    shuffle(begin(_Cartes), end(_Cartes), default_random_engine());
-    Carte* cartePioche= new Carte;
-    cartePioche= _Cartes.back();
-    _Cartes.pop_back();
-    return cartePioche;
+    Carte piocher() override {
+        shuffle(begin(_Cartes), end(_Cartes), default_random_engine());
+        Carte cartePioche;
+        cartePioche = _Cartes.back();
+        while (typeid(cartePioche) != typeid(CarteClan)) {
+            shuffle(begin(_Cartes), end(_Cartes), default_random_engine());
+            cartePioche = _Cartes.back();
+        }
+        _Cartes.pop_back();
+        return cartePioche;
     };
 };
 
-class StategiePiocheTactique:public StrategiePioche{
+class StrategiePiocheTactique : public StrategiePioche {
 private:
 public:
+    StrategiePiocheTactique(vector<Carte> c) : StrategiePioche(c) {};
 
 };
 
-class Contexte{
-    StrategiePioche* maStrategie;
+class Contexte {
+    StrategiePioche *maStrategie;
 public:
-    void executeEstVide(){maStrategie->estVide();}
-    void executePiocher(){maStrategie->piocher();}
-    void setStrategie(StrategiePioche* s){maStrategie;}
+    void executeEstVide() { maStrategie->estVide(); }
+
+    void executePiocher() { maStrategie->piocher(); }
+
+    void setStrategie(StrategiePioche *s) {maStrategie;}
 };
 
-//Couleur CouleursPossibles[6]={Couleur::rouge, Couleur::bleu, Couleur::vert, Couleur::violet,Couleur::orange, Couleur::jaune};
-//        Nombre NombresPossibles[9]={Nombre::un,Nombre::deux,Nombre::trois,Nombre::quatre,Nombre::cinq,Nombre::six,Nombre::sept,Nombre::huit,Nombre::neuf};
-//        for (int i = 0; i < 6; i++) {
-//            for (int j = 0; j < 9; j++) {
-//                auto* newCarte = new CarteClan(CouleursPossibles[i],NombresPossibles[j]);
-//                Cartes.push_back(newCarte);
-//            }
-//        }
 #endif //PROJET_PIOCHE_H
