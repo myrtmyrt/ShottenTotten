@@ -1,67 +1,33 @@
 ﻿#include "borne.h"
 
-void Borne::retirer(const Carte& c) {
+void Borne::poserCarte(Joueur &j, Carte *c) {
+    if (j.getId() == 1) {
+        if (_cartesJoueur1.size() < _nbCartesMax) {
+            _cartesJoueur1.push_back(c);
+            if (_cartesJoueur1.size() == _nbCartesMax) {
+                revendiquer();
+            }
+        } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
 
-	int joueur1;
-	cout << "Enregistrer votre numéro pour jouer (1 ou 2)" << endl;
-	cin >> joueur1;
-
-	while ((joueur1 != 1) && (joueur1 != 2)) {
-		cout << "Votre enregistrement n'est pas valable, enregistrez 1 ou 2 s'il vous plaît" << endl;
-		cin >> joueur1;
-	}
-
-	size_t i = 0;
-	if (joueur1 == 1) {
-		// On cherche la carte correspondante
-		while (i < nb_carte1 && liste_carte1[i] != &c) i++;
-		if (i == nb_carte1) throw "Carte inexistante";
-		// On fait le décalage pour supprimer la carte
-		i++;
-		while (i < nb_carte1) {
-			liste_carte1[i - 1] = liste_carte1[i];
-			i++;
-		}
-		nb_carte1--;
-	}
-}
-		
-
-
-void Borne::ajouter(const Carte& c) {
-
-	//choix de joueur
-	int joueur2;
-	cout << "Enregistrer votre numéro pour jouer (1 ou 2)" << endl;
-	cin >> joueur2;
-
-	while (joueur2 != 1 && joueur2 != 2) {
-		cout << "Votre enregistrement n'est pas valable, enregistrez 1 ou 2 s'il vous plaît" << endl;
-		cin >> joueur2;
-	}
-
-	if (joueur2 == 1) {
-		// Si le tableau est rempli,on ne pourra plus ajouter une carte 
-		if (nb_carte1 == nb_max) throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
-		//sinon
-		const Carte** newtab = new const Carte* [nb_carte1+1];
-		// On recopie les valeurs dans le nouveau tableau
-		for (size_t i = 0; i < nb_carte1; i++) newtab[i] = liste_carte1[i];
-		// Le nouveau tableau devient le tableau du Plateau
-
-		// On pense à désallouer l'ancien tableau
-		
-		auto old = liste_carte1;
-		liste_carte1 = newtab;
-		delete[] old;
-
-		// On ajoute la carte
-		liste_carte1[nb_carte1++] = &c;
-
-		nb_carte1++;
-	}
+    } else {
+        if (_cartesJoueur2.size() < _nbCartesMax) {
+            _cartesJoueur2.push_back(c);
+            if (_cartesJoueur2.size() == _nbCartesMax) {
+                revendiquer();
+            }
+        } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
+    }
 }
 
+void Borne::retirerCarte(Joueur &j, Carte *c) {
 
-	
-//Erreur de type Borne
+    if (j.getId() == 1) {
+        auto it = find(_cartesJoueur1.begin(), _cartesJoueur1.end(), c);
+
+        if (it != _cartesJoueur1.end()) {
+            // La carte a été trouvée, vous pouvez maintenant la supprimer
+            _cartesJoueur1.erase(it);
+        } else throw "Cette carte n'est pas sur cette borne";
+    }
+}
+

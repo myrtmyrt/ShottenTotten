@@ -22,16 +22,16 @@ using namespace std;
 class StrategiePioche {
 protected:
     const size_t _nbCartes;
-    vector<Carte> _Cartes;
+    vector<Carte*> _Cartes;
 public:
-    StrategiePioche(vector<Carte> c) : _Cartes(c), _nbCartes(64) {} //Constructeur
+    StrategiePioche(vector<Carte*> c) : _Cartes(c), _nbCartes(64) {} //Constructeur
     size_t getNbMax() const { return _nbCartes; }
 
     virtual size_t getNbcarte() const { return _Cartes.size(); }
 
     virtual bool estVide() const = 0;
 
-    virtual Carte piocher() = 0;
+    virtual Carte* piocher() = 0;
 };
 
 
@@ -39,12 +39,12 @@ class StrategiePiocheClan : public StrategiePioche {
 private:
 public:
     //méthodes
-    StrategiePiocheClan(vector<Carte> c) : StrategiePioche(c) {}; //constructeur
+    StrategiePiocheClan(vector<Carte*> c) : StrategiePioche(c) {}; //constructeur
     bool estVide() const override { return _Cartes.size() == 0; }
 
-    Carte piocher() override {
+    Carte* piocher() override {
         shuffle(begin(_Cartes), end(_Cartes), default_random_engine());
-        Carte cartePioche;
+        Carte* cartePioche= new Carte;
         cartePioche = _Cartes.back();
         while (typeid(cartePioche) != typeid(CarteClan)) {
             shuffle(begin(_Cartes), end(_Cartes), default_random_engine());
@@ -58,7 +58,7 @@ public:
 class StrategiePiocheTactique : public StrategiePioche {
 private:
 public:
-    StrategiePiocheTactique(vector<Carte> c) : StrategiePioche(c) {};
+    StrategiePiocheTactique(vector<Carte*> c) : StrategiePioche(c) {};
 
 };
 
@@ -71,5 +71,8 @@ public:
 
     void setStrategie(StrategiePioche *s) {maStrategie;}
 };
+
+
+
 
 #endif //PROJET_PIOCHE_H

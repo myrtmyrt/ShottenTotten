@@ -77,7 +77,8 @@ public:
     }
 };
 
-
+Carte effetJoker();
+Carte effetEspion();
 
 
 #endif //PROJET_CARTE_H

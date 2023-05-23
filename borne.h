@@ -1,43 +1,60 @@
-#include "Carte.h"
+#include "carte.h"
+#include "joueur.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
 
 class ErreurBorne {
 public:
-	ErreurBorne(const string& i) :info(i) {}
-	string getErreurBorne() const { return info; }
+    ErreurBorne(const string &i) : info(i) {}
+
+    string getErreurBorne() const { return info; }
+
 private:
-	string info;
+    string info;
 };
 
 class Borne {
 private:
-    bool _gagne;
-    size_t _nb_cartesMax=3;
-    size_t _nb_cartes1=0;
-    size_t _nb_cartes2=0;
-	const Carte** liste_carte1 = nullptr;
-	const Carte** liste_carte2 = nullptr;
+    size_t _numero;
+    Joueur *_gagnant;
+    size_t _nbCartesMax = 3;
+    vector<Carte *> _cartesJoueur1;
+    vector<Carte *> _cartesJoueur2;
 
 public:
-	int getGagne() const { return _gagne; }
-	int getNbMax() const { return _nb_cartes; }
+    //GETTERS
+    vector<Carte*> getCartesJoueur1() const { return _cartesJoueur1; }
 
-	//On pourrait avoir 0 cartes au d��but
-	Borne() :_gagne(0){};
-	~Borne() {
-		delete[] liste_carte1;
-		delete[] liste_carte2;
-	}
-	Borne(const Borne&) = delete;
-	Borne& operator=(const Borne& p) = delete;
+    vector<Carte*> getCartesJoueur2() const { return _cartesJoueur2; }
 
-	void poser (const Carte& c);
-	void retirer(const Carte& c);
+    Joueur &getGagnant() const { return *_gagnant; }
+
+    //SETTERS
+    void setGagnant(Joueur *j) { _gagnant = j; }
+    void setNbCartesMax(unsigned int n){_nbCartesMax=n;};
+
+    //Contructeur, destructeur, recopie par défaut
+    Borne(size_t numero) : _gagnant(nullptr), _numero(numero) {}
+
+    ~Borne() { delete _gagnant; }
+    //ICI CONSTRUCTEUR RECOPIE...
+
+    //Ajouter/Retirer une carte
+    void poserCarte(Joueur &j, Carte *c);
+
+    void retirerCarte(Joueur &j, Carte *c);
+
+    //Afficher une borne
+    void afficherBorne() const;
+
+    void revendiquer();
 };
 
+
 string toString(Nombre v);
-ostream& operator<<(ostream& f, Nombre v);
+
+ostream &operator<<(ostream &f, Nombre v);

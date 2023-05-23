@@ -13,6 +13,7 @@
 
 class Joueur {
 private:
+    unsigned int _id;
     const Carte** _cartes = nullptr;
     unsigned int _nbCartes;
     std::string _pseudo;
@@ -20,6 +21,7 @@ private:
 public:
 
     Joueur(bool bot, bool tactique, const Manche& manche, std::string pseudo = "Janet");
+    unsigned int getId()const {return _id;};
 
     ~Joueur();
 };
