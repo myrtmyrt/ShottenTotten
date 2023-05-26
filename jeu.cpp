@@ -37,5 +37,6 @@ Jeu& Jeu::getInstance() { return *_jeuUnique; }
 void Jeu::jouerManche(){
     const Manche* mancheActuelle = new Manche(*_jeuUnique);
 
+    _joueur1->addPoint();
     return;
 }

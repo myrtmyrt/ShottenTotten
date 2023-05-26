@@ -75,5 +75,4 @@ Manche::Manche(Jeu &jeu) {
         }
     }
 
-    jeu.getJoueur1().afficherCartes();
 }
