@@ -5,6 +5,7 @@
 using namespace std;
 
 void afficherTitre(){
+    system("clear");
     cout<<endl<<endl<<"      __      _           _   _               _____      _   _             "<<endl;
     cout<<"     / _\\ ___| |__   ___ | |_| |_ ___ _ __   /__   \\___ | |_| |_ ___ _ __  "<<endl;
     cout<<"     \\ \\ / __| '_ \\ / _ \\| __| __/ _ \\ '_ \\    / /\\/ _ \\| __| __/ _ \\ '_ \\ "<<endl;
@@ -31,7 +32,6 @@ int main(int argc, char **argv) {
     /*
      * Récupération du/des joueurs
      */
-    system("clear");
     afficherTitre();
     cout<<"     1 - Un joueur et une I.A"<<endl;
     cout<<"     2 - Deux joueurs"<<endl;
@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
     int action = -1;
     cout<<"     Choisissez le programme : ";
     cin>>action;
-    cout<<"     ----------------------------------------------------------------------"<<endl;
 
+    afficherTitre();
     switch (action) {
         case 1:
             bot = true;
@@ -64,15 +64,14 @@ int main(int argc, char **argv) {
     /*
      * Récupération du mode de jeu
      */
-    system("clear");
     afficherTitre();
     cout<<"     1 - Normal"<<endl;
     cout<<"     2 - Tactique"<<endl<<endl;
 
     action = -1;
-    cout<<"     Choisissez le programe : ";
+    cout<<"     Choisissez le programme : ";
     cin>>action;
-    cout<<"     ----------------------------------------------------------------------"<<endl;
+
 
     switch (action) {
         case 1:
@@ -89,6 +88,7 @@ int main(int argc, char **argv) {
     /*
      * Récupération du nombre de manches gagnantes
      */
+    afficherTitre();
     cout<<endl<<"     Nombre de manches gagnantes : ";
     cin>>nbManchesGagnantes;
 

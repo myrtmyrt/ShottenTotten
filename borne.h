@@ -39,7 +39,7 @@ public:
 
     //Afficher une borne
     void afficherBorne() const;
-    void revendiquerBorne();
+    //void revendiquerBorne();
 };
 
 

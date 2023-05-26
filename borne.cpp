@@ -9,7 +9,7 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
         if (_cartesJoueur1.size() < _nbCartesMax) {
             _cartesJoueur1.push_back(c);
             if (_cartesJoueur1.size() == _nbCartesMax) {
-                revendiquerBorne();
+                //revendiquerBorne();
             }
         } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
 
@@ -17,7 +17,7 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
         if (_cartesJoueur2.size() < _nbCartesMax) {
             _cartesJoueur2.push_back(c);
             if (_cartesJoueur2.size() == _nbCartesMax) {
-                revendiquerBorne();
+                //revendiquerBorne();
             }
         } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
     }
