@@ -44,6 +44,13 @@ public:
     ~Joueur() = default;
 
     void afficherCartes() const;
+    bool contientCombatDeBoue(){
+        for (unsigned int i = 0; i < _cartes.size(); i++) {
+            if (_cartes[i]->getType()=="Tactique") {
+                if (_cartes[i])
+            }
+        }
+    }
 };
 
 #endif //JOUEUR

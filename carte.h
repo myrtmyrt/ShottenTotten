@@ -95,6 +95,8 @@ class Tactique : public Carte {
 public:
     Tactique(TypeTactique type, void(*e)()) : Carte(), type(type), effet(e) {};
 
+    TypeTactique getId() const { return type; }
+
     void jouerJoker(Joueur &j, Borne *b,Tactique* joker);
 
     void jouerEspion(Joueur &j, Borne *b,Tactique* porteBouclier);

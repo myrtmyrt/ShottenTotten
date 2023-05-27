@@ -8,7 +8,8 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
     if (j.getId() == 1) {
         if (_cartesJoueur1.size() < _nbCartesMax) {
             _cartesJoueur1.push_back(c);
-            j.supprimerCarte(c);
+            auto indexCarte= find(j.getCartes().begin(), j.getCartes().end(),c);
+            j.supprimerCarte(indexCarte);
             if (_cartesJoueur1.size() == _nbCartesMax) {
                 //revendiquerBorne();
             }
@@ -17,7 +18,8 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
     } else {
         if (_cartesJoueur2.size() < _nbCartesMax) {
             _cartesJoueur2.push_back(c);
-            j.supprimerCarte(c);
+            auto indexCarte= find(j.getCartes().begin(), j.getCartes().end(),c);
+            j.supprimerCarte(indexCarte);
             if (_cartesJoueur2.size() == _nbCartesMax) {
                 //revendiquerBorne();
             }
