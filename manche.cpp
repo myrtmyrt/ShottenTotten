@@ -96,10 +96,10 @@ bool Manche::verifGagnant(Joueur& jou) const{
                 bornesWin++;
                 if (idLastWin == jou.getId()) {
                     bornesSuiteWin++;
-                } else {
                     if (bornesSuiteWin > bornesMaxSuiteWin) {
                         bornesMaxSuiteWin = bornesSuiteWin;
                     }
+                } else {
                     bornesSuiteWin = 1;
                 }
             }
