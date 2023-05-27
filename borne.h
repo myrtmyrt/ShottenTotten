@@ -12,6 +12,8 @@
 #include "carte.h"
 #include "joueur.h"
 
+int toInt(Nombre n);
+
 class Borne {
 private:
     size_t _numero;
@@ -45,6 +47,9 @@ public:
     //void revendiquerBorne();
 
     bool estPleine(Joueur &j) const;
+
+    void trouverGagnant();
+    unsigned int calculerPoints(std::vector<Carte*> _cartesJoueur);
 
 };
 

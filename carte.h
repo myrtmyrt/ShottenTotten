@@ -33,6 +33,9 @@ public:
     virtual void jouer() = 0;
     virtual void afficher() = 0;
     virtual std::string getType() = 0;
+    virtual TypeTactique getNom()=0;
+    virtual Nombre getNombre() = 0;
+    virtual Couleur getCouleur() = 0;
 };
 
 // Concrete card classes
@@ -53,13 +56,26 @@ public:
         printTextInColor(_couleur, _numero);
     }
 
+    TypeTactique getNom() override {
+        std::cout<<"Impossible car c'est une carte clan";
+    };
+
+    Nombre getNombre() override {
+        return _numero;
+    };
+
+    Couleur getCouleur() override {
+        return _couleur;
+    };
+
+
 };
 
 class Tactique : public Carte {
-    TypeTactique type;
+    TypeTactique _type;
     void (*effet)();
 public:
-    Tactique(TypeTactique type,void(*e)()):Carte(),type(type),effet(e) {};
+    Tactique(TypeTactique type,void(*e)()):Carte(),_type(type),effet(e) {};
 
     static void jouerJoker(){
         std::cout << "Playing a joker defense card." << std::endl;
@@ -108,6 +124,8 @@ public:
     void afficher() override{
         std::cout<<"Tactique"<<std::endl;
     }
+
+    TypeTactique getNom() override { return _type; }
 };
 
 #endif //CARTE
