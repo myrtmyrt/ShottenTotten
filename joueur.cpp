@@ -3,11 +3,23 @@
 //
 
 #include "joueur.h"
+#include "carte.h"
 
 void Joueur::afficherCartes() const{
     for (Carte* card : _cartes) {
         card->afficher();
     }
+}
+
+bool Joueur::contientCombatDeBoue(){
+    for (unsigned int i = 0; i < _cartes.size(); i++) {
+        if (_cartes[i]->getType()=="Tactique") {
+            if (_cartes[i]->getNom()==TypeTactique::CombatBoue){
+                return true;
+            };
+        }
+    }
+    return false;
 }
 
 void Joueur::addCarte(Carte *carte) {

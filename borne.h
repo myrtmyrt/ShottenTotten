@@ -9,12 +9,16 @@
 #include <string>
 #include <algorithm>
 
-#include "carte.h"
+//#include "carte.h"
 #include "joueur.h"
 
 using namespace std;
 
+class Carte;
+enum class Nombre;
+
 int toInt(Nombre n);
+
 class Borne {
 private:
     size_t _numero;
@@ -50,7 +54,7 @@ public:
 
     bool estPleine(Joueur &j) const;
 
-    void trouverGagnant();
+    unsigned int trouverGagnant(unsigned int idPremier);
     unsigned int calculerPoints(vector<Carte*> _cartesJoueur);
 
 };

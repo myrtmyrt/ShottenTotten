@@ -3,62 +3,69 @@
 //
 
 #include "carte.h"
+#include "joueur.h"
 #include "borne.h"
+#include "pioche.h"
+#include "manche.h"
 
 using namespace std;
 
-//string toString(Couleur c) {
-//    switch (c) {
-//        case Couleur::Rouge:
-//            return "R";
-//        case Couleur::Violet:
-//            return "Vi";
-//        case Couleur::Vert:
-//            return "V";
-//        case Couleur::Bleu:
-//            return "B";
-//        case Couleur::Orange:
-//            return "O";
-//        case Couleur::Jaune:
-//            return "J";
-//        default:
-//            throw CarteException("Couleur inconnue");
-//    }
-//}
 
-string toString(Nombre v) {
-    switch (v) {
-        case Nombre::Un:
-            return "1";
-        case Nombre::Deux:
-            return "2";
-        case Nombre::Trois:
-            return "3";
-        case Nombre::Quatre:
-            return "4";
-        case Nombre::Cinq:
-            return "5";
-        case Nombre::Six:
-            return "6";
-        case Nombre::Sept:
-            return "7";
-        case Nombre::Huit:
-            return "8";
-        case Nombre::Neuf:
-            return "9";
-        default:
-            throw CarteException("Nombre inconnue");
+std::string toString(Couleur c) {
+    switch (c) {
+        case Couleur::Rouge: return "R";
+        case Couleur::Vert: return "E";
+        case Couleur::Jaune: return "J";
+        case Couleur::Orange: return "O";
+        case Couleur::Violet: return "V";
+        case Couleur::Bleu: return "B";
+        default: std::cout<<"erreur";
     }
 }
 
-ostream &operator<<(std::ostream &f, Couleur c) {
-    f << toString(c);
-    return f;
+std::string toString(Nombre v) {
+    switch (v) {
+        case Nombre::Un: return "1";
+        case Nombre::Deux: return "2";
+        case Nombre::Trois: return "3";
+        case Nombre::Quatre: return "4";
+        case Nombre::Cinq: return "5";
+        case Nombre::Six: return "6";
+        case Nombre::Sept: return "7";
+        case Nombre::Huit: return "8";
+        case Nombre::Neuf: return "9";
+        default: std::cout<<"erreur";
+    }
 }
 
-ostream &operator<<(std::ostream &f, Nombre v) {
-    f << toString(v);
-    return f;
+std::ostream& operator<<(std::ostream& f, Couleur c) { f << toString(c); return f; }
+std::ostream& operator<<(std::ostream& f, Nombre v) {	f << toString(v); return f; }
+
+void printTextInColor(Couleur color, Nombre numero) {
+    switch (color) {
+        case Couleur::Rouge:
+            std::cout << "\033[31m"; // Mettre texte en rouge
+            break;
+        case Couleur::Vert:
+            std::cout << "\033[32m"; // Mettre texte en vert
+            break;
+        case Couleur::Bleu:
+            std::cout << "\033[34m"; // Mettre texte en bleu
+            break;
+        case Couleur::Violet:
+            std::cout << "\033[35m"; // Mettre texte en violet
+            break;
+        case Couleur::Orange:
+            std::cout << "\033[38;5;208m"; // Mettre texte en orange
+            break;
+        case Couleur::Jaune:
+            std::cout << "\033[93m"; // Mettre texte en jaune
+            break;
+        default:
+            break;
+    }
+
+    std::cout << "["<<numero<<"]" << "\033[m "; // Reset text color to default
 }
 
 void Tactique::jouerJoker(Joueur &j, Borne *b,Tactique* joker) {
@@ -178,9 +185,11 @@ void Tactique::jouerEspion(Joueur &j, Borne *b, Tactique *espion) {
     int nombreInput;
     cin >> nombreInput;
     if (j.getId() == 1) {
-        b->getCartesJoueur1().supprimerCarte(espion);
+        auto posJoker = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(),espion);
+        b->getCartesJoueur1().erase(posJoker);
     } else {
-        b->getCartesJoueur1().supprimerCarte(espion);
+        auto posJoker= find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), espion);
+        b->getCartesJoueur2().erase(posJoker);
     }
     Clan *newCarte = new Clan(n, c);
     b->poserCarte(j, newCarte);
@@ -238,9 +247,11 @@ void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier) 
     }
 
     if (j.getId() == 1) {
-        b->getCartesJoueur1().supprimerCarte(porteBouclier);
+        auto posJoker = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(),porteBouclier);
+        b->getCartesJoueur1().erase(posJoker);
     } else {
-        b->getCartesJoueur2().supprimerCarte(porteBouclier);
+        auto posJoker= find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), porteBouclier);
+        b->getCartesJoueur2().erase(posJoker);
     }
 
     Clan* newCarte = new Clan(n, c);
@@ -255,9 +266,9 @@ void Tactique::jouerCombatDeBoue(Borne *b) {
 void Tactique::jouerChasseurDeTete(Joueur& j, Pioche p,Borne* b,string t) {
     for (int i = 0; i < 2; i++) {
         if (j.getId()==1){
-            b->poserCarte(j,p.piocher(t,j));
+            p.piocher(t,j);
         }else{
-            b->poserCarte(j,p.piocher(t,j));
+            p.piocher(t,j);
         }
 
     }
@@ -268,8 +279,8 @@ void Tactique::jouerChasseurDeTete(Joueur& j, Pioche p,Borne* b,string t) {
     cout<<"Tapez le numéro de la premiere carte à supprimer "<<endl;
     unsigned int c2;
     cin>>c2;
-    b->retirerCarte(j.getCartes()[c1]);
-    b->retirerCarte(j.getCartes()[c2]);
+    b->retirerCarte(j,j.getCartes()[c1]);
+    b->retirerCarte(j,j.getCartes()[c2]);
 
 }
 
@@ -283,15 +294,15 @@ void Tactique::jouerStratege(Joueur& j, Pioche p,Manche* m,string t) {
     unsigned int action;
     if(action>0 and action<10){
         if (j.getId()==1){
-            m->getBornes()[action]->poserCarte( m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+            m->getBornes()[action]->poserCarte(j, m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
         }else{
-            m->getBornes()[action]->poserCarte( m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
+            m->getBornes()[action]->poserCarte(j, m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
         }
     }
     if (j.getId()==1){
-        m->getBornes()[indexBorne]->retirerCarte( m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        m->getBornes()[indexBorne]->retirerCarte(j, m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
     }else{
-        m->getBornes()[indexBorne]->retirerCarte( m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
+        m->getBornes()[indexBorne]->retirerCarte(j, m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
     }
 }
 
@@ -303,9 +314,9 @@ void Tactique::jouerBanshee(Joueur &j, Manche* m) {
     cout<<"Tapez le numéro de la carte que vous souhaitez déplacer ou défausser sur la borne n°"<<indexBorne<<endl;
     unsigned int indexCarte;
     if (j.getId()==1){
-        m->getBornes()[indexBorne]->retirerCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        m->getBornes()[indexBorne]->retirerCarte(j,m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
     }else{
-        m->getBornes()[indexBorne]->retirerCarte( m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
+        m->getBornes()[indexBorne]->retirerCarte(j, m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
     }
 }
 
@@ -318,47 +329,20 @@ void Tactique::jouerTraitre(Joueur &j,Manche* m) {
     //on vérifie que la carte est bien une carte clan
     if (m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]->getType()=="Clan"){
         if (j.getId()==1){
-            m->getBornes()[index2]->getCartesJoueur1()->poserCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+            m->getBornes()[index2]->poserCarte(j,m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
         }else{
-            m->getBornes()[index2]->getCartesJoueur2()->poserCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+            m->getBornes()[index2]->poserCarte(j,m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
         }
         if (j.getId()==1){
-            m->getBornes()[indexBorne]->retirerCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+            m->getBornes()[indexBorne]->retirerCarte(j,m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
         }else{
-            m->getBornes()[indexBorne]->retirerCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+            m->getBornes()[indexBorne]->retirerCarte(j,m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
         }
     } else throw "La carte choisie n'est pas une carte clan";
 
 
 }
 
-
-void printTextInColor(Couleur color, Nombre numero) {
-    switch (color) {
-        case Couleur::Rouge:
-            std::cout << "\033[31m"; // Set text color to red
-            break;
-        case Couleur::Vert:
-            std::cout << "\033[32m"; // Set text color to green
-            break;
-        case Couleur::Bleu:
-            std::cout << "\033[34m"; // Set text color to blue
-            break;
-        case Couleur::Violet:
-            std::cout << "\033[35m"; // Set text color to blue
-            break;
-        case Couleur::Orange:
-            std::cout << "\033[33m"; // Set text color to blue
-            break;
-        case Couleur::Jaune:
-            std::cout << "\033[93m"; // Set text color to blue
-            break;
-        default:
-            break;
-    }
-
-    std::cout << "[" << numero << "]" << "\033[0m"; // Reset text color to default
-}
 
 
 

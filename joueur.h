@@ -9,9 +9,10 @@
 #include <string>
 #include <vector>
 
-#include "carte.h"
 
 using namespace std;
+
+class Carte;
 
 class Joueur {
 private:
@@ -44,16 +45,7 @@ public:
     ~Joueur() = default;
 
     void afficherCartes() const;
-    bool contientCombatDeBoue(){
-        for (unsigned int i = 0; i < _cartes.size(); i++) {
-            if (_cartes[i]->getType()=="Tactique") {
-                if (_cartes[i]->getNom()==TypeTactique::CombatBoue){
-                    return true;
-                };
-            }
-        }
-        return false;
-    }
+    bool contientCombatDeBoue();
 };
 
 #endif //JOUEUR

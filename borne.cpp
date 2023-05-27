@@ -3,6 +3,7 @@
 //
 
 #include "borne.h"
+#include "carte.h"
 
 void Borne::poserCarte(Joueur &j, Carte *c) {
     if (j.getId() == 1) {
@@ -68,7 +69,7 @@ void Borne::afficher() const {
 bool Borne::estPleine(Joueur &j) const {
     size_t taille;
     for (unsigned int i = 0; i < j.getCartes().size(); i++) {
-        if (j.getCartes()[i].getType() == "Clan") {
+        if (j.getCartes()[i]->getType() == "Clan") {
             taille++;
         }
     }

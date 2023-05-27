@@ -3,6 +3,7 @@
 //
 
 #include "pioche.h"
+#include "carte.h"
 
 using namespace std;
 

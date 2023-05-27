@@ -10,10 +10,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "carte.h"
+
 #include "joueur.h"
 
 using namespace std;
+
+class Carte;
 
 class Pioche {
 private:

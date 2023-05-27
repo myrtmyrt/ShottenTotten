@@ -6,12 +6,16 @@
 #define PROJET_CARTE_H
 
 #include <iostream>
-#include "carte.h"
-#include "borne.h"
-#include "pioche.h"
-#include "manche.h"
+#include <cstdio>
+#include <string>
+//#include "borne.h"
 
 using namespace std;
+
+class Manche;
+class Pioche;
+class Borne;
+class Joueur;
 
 enum class Couleur {
     Rouge, Bleu, Vert, Violet, Orange, Jaune
@@ -23,22 +27,19 @@ enum class TypeTactique {
     Joker, Espion, PorteBouclier, ColinMaillard, CombatBoue, ChasseurTete, Stratege, Banshee, Traitre
 };
 
-//// conversion d'une caractéristique en string
-//string toString(Couleur c);
+// conversion d'une caractéristique en string
+std::string toString(Couleur c);
+std::string toString(Nombre v);
 
-string toString(Nombre v);
-
-//// écriture d'une caractéristique sur un flux ostream
-//ostream &operator<<(ostream &f, Couleur c);
-
-ostream &operator<<(ostream &f, Nombre v);
-
+// écriture d'une caractéristique sur un flux ostream
+std::ostream& operator<<(std::ostream& f, Couleur c);
+std::ostream& operator<<(std::ostream& f, Nombre v);
 
 void printTextInColor(Couleur color, Nombre numero);
 
-//// listes contenant les valeurs possibles pour chacune des caractéristiques
-//extern std::initializer_list<Couleur> Couleurs;
-//extern std::initializer_list<Nombre> Nombres;
+// listes contenant les valeurs possibles pour chacune des caractéristiques
+extern std::initializer_list<Couleur> Couleurs;
+extern std::initializer_list<Nombre> Nombres;
 
 // classe pour gérer les exceptions
 class CarteException {
@@ -51,7 +52,7 @@ private:
     string info;
 };
 
-class Carte{
+class Carte {
 public:
     // Opérateur d'affectation
     Carte &operator=(const Carte &c) = default; // optionnel
@@ -60,8 +61,11 @@ public:
     virtual void afficher() = 0;
 
     virtual std::string getType() = 0;
-    virtual TypeTactique getNom()=0;
+
+    virtual TypeTactique getNom() = 0;
+
     virtual Nombre getNombre() = 0;
+
     virtual Couleur getCouleur() = 0;
 
 };
@@ -97,8 +101,9 @@ public:
     void afficher() override {
         printTextInColor(_couleur, _numero);
     }
+
     TypeTactique getNom() override {
-        cout<<"Impossible car c'est une carte clan";
+        cout << "Impossible car c'est une carte clan";
     };
 };
 
@@ -113,21 +118,21 @@ public:
     TypeTactique getNom() const { return type; }
 
 
-    void jouerJoker(Joueur &j, Borne *b,Tactique* joker);
+    static void jouerJoker(Joueur &j, Borne *b, Tactique *joker);
 
-    void jouerEspion(Joueur &j, Borne *b, Tactique *espion);
+    static void jouerEspion(Joueur &j, Borne *b, Tactique *espion);
 
-    void jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier);
+    static void jouerPorteBouclier(Joueur &j, Borne *b, Tactique *porteBouclier);
 
-    void jouerCombatDeBoue(Borne *b);
+    static void jouerCombatDeBoue(Borne *b);
 
-    void jouerChasseurDeTete(Joueur& j, Pioche p,Borne* b,string t);
+    static void jouerChasseurDeTete(Joueur &j, Pioche p, Borne *b, string t);
 
-    void jouerStratege(Joueur& j, Pioche p,Manche* m,string t);
+    static void jouerStratege(Joueur &j, Pioche p, Manche *m, string t);
 
-    void jouerBanshee(Joueur &j, Manche* m);
+    static void jouerBanshee(Joueur &j, Manche *m);
 
-    void jouerTraitre(Joueur &j,Manche* m);
+    static void jouerTraitre(Joueur &j, Manche *m);
 
     void jouer() override {
         effet();
@@ -138,11 +143,11 @@ public:
     }
 
     Nombre getNombre() override {
-        std::cout<<"Tactique"<<std::endl;
+        std::cout << "Tactique" << std::endl;
     };
 
     Couleur getCouleur() override {
-        std::cout<<"Tactique"<<std::endl;
+        std::cout << "Tactique" << std::endl;
     };
 
 

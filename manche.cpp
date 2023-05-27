@@ -4,9 +4,12 @@
 
 #include "jeu.h"
 #include "carte.h"
-#include "pioche.h"
 #include "manche.h"
+#include "pioche.h"
+#include "joueur.h"
 #include <unordered_map>
+#include <functional>
+
 
 #define BORNES 9
 
@@ -15,16 +18,16 @@ using namespace std;
 initializer_list<Nombre> Nombres = {Nombre::Un, Nombre::Deux, Nombre::Trois, Nombre::Quatre, Nombre::Cinq, Nombre::Six,
                                     Nombre::Sept, Nombre::Huit, Nombre::Neuf};
 
-unordered_map<TypeTactique, void (*)()> TypeTactiques = {
-        {TypeTactique::Joker,         Tactique::jouerJoker},
-        {TypeTactique::Espion,        Tactique::jouerEspion},
-        {TypeTactique::PorteBouclier, Tactique::jouerPorteBouclier},
-        {TypeTactique::ColinMaillard, Tactique::jouerColinMaillard},
-        {TypeTactique::CombatBoue,    Tactique::jouerCombatBoue},
-        {TypeTactique::ChasseurTete,  Tactique::jouerChasseurTete},
-        {TypeTactique::Stratege,      Tactique::jouerStratege},
-        {TypeTactique::Banshee,       Tactique::jouerBanshee},
-        {TypeTactique::Traitre,       Tactique::jouerTraitre}
+unordered_map<TypeTactique, function<void()>> TypeTactiques = {
+        {TypeTactique::Joker, []() { Tactique::jouerJoker((Joueur &j, Borne *b, Tactique *joker); }},
+        {TypeTactique::Espion, []() { Tactique::jouerEspion(); }},
+        {TypeTactique::PorteBouclier, []() { Tactique::jouerPorteBouclier(); }},
+        {TypeTactique::ColinMaillard, []() { Tactique::jouerColinMaillard(); }},
+        {TypeTactique::CombatBoue, []() { Tactique::jouerCombatDeBoue(); }},
+        {TypeTactique::ChasseurTete, []() { Tactique::jouerChasseurDeTete(); }},
+        {TypeTactique::Stratege, []() { Tactique::jouerStratege(); }},
+        {TypeTactique::Banshee, []() { Tactique::jouerBanshee(); }},
+        {TypeTactique::Traitre, []() { Tactique::jouerTraitre(); }}
 };
 
 
