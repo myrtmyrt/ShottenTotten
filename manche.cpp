@@ -13,13 +13,13 @@ std::initializer_list<Nombre> Nombres = { Nombre::un, Nombre::deux, Nombre::troi
 std::unordered_map<TypeTactique, jouerFonction> TypeTactiques = {
         { TypeTactique::joker, Tactique::jouerJoker },
         { TypeTactique::espion, Tactique::jouerEspion },
-        /*{ TypeTactique::porteBouclier, Tactique::jouerPorteBouclier },
+        { TypeTactique::porteBouclier, Tactique::jouerPorteBouclier },
         { TypeTactique::colinMaillard, Tactique::jouerColinMaillard },
         { TypeTactique::combatBoue, Tactique::jouerCombatBoue },
         { TypeTactique::chasseurTete, Tactique::jouerChasseurTete},
         { TypeTactique::stratege, Tactique::jouerStratege },
         { TypeTactique::banshee, Tactique::jouerBanshee },
-        { TypeTactique::traitre, Tactique::jouerTraitre }*/
+        { TypeTactique::traitre, Tactique::jouerTraitre }
 };
 
 
@@ -52,12 +52,6 @@ Manche::Manche(Jeu &jeu) {
     }
 
     _cartes = cartes;
-
-    _cartes[54]->jouer(jeu.getJoueur1(), _bornes[0]);
-
-    fflush(stdout);
-    system("read");
-
 
     /*
      * CRÉATION DE LA PIOCHE À PARTIR DES CARTES

@@ -29,6 +29,21 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
     }
 }
 
+void Borne::changerCarte(Joueur &j, Carte *c) {
+    if (j.getId() == 1) {
+        if (_cartesJoueur1.size() < _nbCartesMax) {
+            _cartesJoueur1.push_back(c);
+
+        } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
+
+    } else {
+        if (_cartesJoueur2.size() < _nbCartesMax) {
+            _cartesJoueur2.push_back(c);
+
+        } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
+    }
+}
+
 void Borne::retirerCarte(Joueur &j, Carte *c) {
 
     if (j.getId() == 1) {
@@ -37,6 +52,13 @@ void Borne::retirerCarte(Joueur &j, Carte *c) {
         if (it != _cartesJoueur1.end()) {
             // La carte a été trouvée, vous pouvez maintenant la supprimer
             _cartesJoueur1.erase(it);
+        } else throw "Cette carte n'est pas sur cette borne";
+    }else{
+        auto it = find(_cartesJoueur2.begin(), _cartesJoueur2.end(), c);
+
+        if (it != _cartesJoueur2.end()) {
+            // La carte a été trouvée, vous pouvez maintenant la supprimer
+            _cartesJoueur2.erase(it);
         } else throw "Cette carte n'est pas sur cette borne";
     }
 }
@@ -116,13 +138,29 @@ bool Borne::estPleine(Joueur &j) const {
     }
 }
 
-unsigned int Borne::trouverGagnant(unsigned int idPremier){
+unsigned int Borne::trouverGagnant(unsigned int idPremier, Joueur& J1, Joueur& J2, Manche* manche){
     bool estSomme = false;
 
-    //PArcourrir cartes de fond en comble
+    for (Carte* card : _cartesJoueur1) {
+        if(card->getType() == "Tactique"){
+            if(card->getNom() == TypeTactique::colinMaillard){
+                estSomme = true;
+            }
+            card->jouer(J1, this, manche);
+        }
+    }
 
-    unsigned int pointsJ1 = calculerPoints(_cartesJoueur1);
-    unsigned int pointsJ2 = calculerPoints(_cartesJoueur2);
+    for (Carte* card : _cartesJoueur2) {
+        if(card->getType() == "Tactique"){
+            if(card->getNom() == TypeTactique::colinMaillard){
+                estSomme = true;
+            }
+            card->jouer(J2, this, manche);
+        }
+    }
+
+    unsigned int pointsJ1 = calculerPoints(_cartesJoueur1, J1);
+    unsigned int pointsJ2 = calculerPoints(_cartesJoueur2, J2);
 
     if(estSomme == true){
         pointsJ1 = pointsJ1%50;
@@ -143,7 +181,7 @@ unsigned int Borne::trouverGagnant(unsigned int idPremier){
 
 }
 
-unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
+unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur, Joueur& j) {
     bool estSuiteCouleur = false;
     bool estBrelan = true;
     bool estCouleur = true;
@@ -162,8 +200,6 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
         if(card->getType() == "Clan") {
             suiteNombre[i] = toInt(card->getNombre());
             suiteCouleur[i++] = card->getCouleur();
-        }else{
-            //card->jouer();
         }
     }
 

@@ -80,7 +80,7 @@ void Jeu::jouerManche(){
     /*
      * Création de manche
      */
-    const Manche* mancheActuelle = new Manche(*_jeuUnique);
+    Manche* mancheActuelle = new Manche(*_jeuUnique);
     unsigned int gagnant = 0;
     /*
      * Jouer manche
@@ -122,10 +122,24 @@ void Jeu::jouerManche(){
 
         mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur1, _joueur1->getCartes()[choiceCarte-1]);
 
-        mancheActuelle->getPioche().piocher("Clan", *_joueur1);
+        if(_modeDeJeu == Mode::normal){
+            mancheActuelle->getPioche().piocher("Clan", *_joueur1);
+        }else{
+            int choicePioche = 0;
+            while(choicePioche != 1 && choicePioche != 2){
+                std::cout<<std::endl<<"\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                std::cin>>choicePioche;
+            }
+            if(choicePioche == 1){
+                mancheActuelle->getPioche().piocher("Clan", *_joueur1);
+            }else{
+                mancheActuelle->getPioche().piocher("Tactique", *_joueur1);
+            }
+        }
+
 
         if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
-            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(2) == 1){
+            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(2, *_joueur1, *_joueur2, mancheActuelle) == 1){
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
             }else{
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
@@ -182,10 +196,23 @@ void Jeu::jouerManche(){
 
         mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur2, _joueur2->getCartes()[choiceCarte-1]);
 
-        mancheActuelle->getPioche().piocher("Clan", *_joueur2);
+        if(_modeDeJeu == Mode::normal){
+            mancheActuelle->getPioche().piocher("Clan", *_joueur2);
+        }else{
+            int choicePioche = 0;
+            while(choicePioche != 1 && choicePioche != 2){
+                std::cout<<std::endl<<"\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                std::cin>>choicePioche;
+            }
+            if(choicePioche == 1){
+                mancheActuelle->getPioche().piocher("Clan", *_joueur2);
+            }else{
+                mancheActuelle->getPioche().piocher("Tactique", *_joueur2);
+            }
+        }
 
         if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
-            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(1) == 1){
+            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(1, *_joueur1, *_joueur2, mancheActuelle) == 1){
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
             }else{
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);

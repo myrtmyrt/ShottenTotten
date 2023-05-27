@@ -13,6 +13,7 @@
 
 class Joueur;
 class Borne;
+class Manche;
 
 enum class Couleur { rouge, bleu, vert, violet, orange, jaune};
 enum class Nombre { un=1, deux=2, trois=3, quatre=4, cinq=5, six=6, sept=7, huit=8, neuf=9};
@@ -31,13 +32,13 @@ void printTextInColor(Couleur color, Nombre numero);
 
 void printTactique(TypeTactique v);
 
-typedef void (*jouerFonction)(Joueur&, Borne*);
+typedef void (*jouerFonction)(Joueur&, Borne*, Manche*);
 
 // Abstract base class for cards
 class Carte {
 
 public:
-    virtual void jouer(Joueur& j, Borne* b) = 0;
+    virtual void jouer(Joueur& j, Borne* b, Manche* m) = 0;
     virtual void afficher() = 0;
     virtual std::string getType() = 0;
     virtual TypeTactique getNom()=0;
@@ -51,7 +52,7 @@ class Clan : public Carte {
     Couleur _couleur;
 public:
     Clan(Nombre numero, Couleur couleur) : Carte(), _numero(numero), _couleur(couleur) {};
-    void jouer(Joueur& j, Borne* b) override {
+    void jouer(Joueur& j, Borne* b, Manche* m) override {
         std::cout << "Playing an attack card." << std::endl;
     }
 
@@ -84,16 +85,26 @@ class Tactique : public Carte {
 public:
     Tactique(TypeTactique type, jouerFonction function):Carte(),_type(type),_function(function) {};
 
-    static void jouerJoker(Joueur& j, Borne* b){
-        std::cout << "Playing a joker defense card." << std::endl;
-    }
+    static void jouerJoker(Joueur& j, Borne* b, Manche* m);
 
-    static void jouerEspion(Joueur& j, Borne* b){
-        std::cout << "Playing a espion defense card." << std::endl;
-    }
+    static void jouerEspion(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerPorteBouclier(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerColinMaillard(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerCombatBoue(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerChasseurTete(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerStratege(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerBanshee(Joueur& j, Borne* b, Manche* m);
+
+    static void jouerTraitre(Joueur& j, Borne* b, Manche* m);
 
 
-    void jouer(Joueur& j, Borne* b) override;
+    void jouer(Joueur& j, Borne* b, Manche* m) override;
 
     std::string getType() override {
         return "Tactique";

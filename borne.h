@@ -39,6 +39,7 @@ public:
 
     //Ajouter/Retirer une carte
     void poserCarte(Joueur& j, Carte* c);
+    void changerCarte(Joueur& j, Carte* c);
     void retirerCarte(Joueur& j, Carte* c);
 
     //Afficher une borne
@@ -49,8 +50,8 @@ public:
 
     bool estPleine(Joueur &j) const;
 
-    unsigned int trouverGagnant(unsigned int idPremier);
-    unsigned int calculerPoints(std::vector<Carte*> _cartesJoueur);
+    unsigned int trouverGagnant(unsigned int idPremier, Joueur& j1, Joueur& j2, Manche* manche);
+    unsigned int calculerPoints(std::vector<Carte*> _cartesJoueur, Joueur& j);
 
 };
 
