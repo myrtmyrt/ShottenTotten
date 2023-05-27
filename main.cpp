@@ -16,7 +16,7 @@ void afficherTitre(){
 }
 
 int main(int argc, char **argv) {
-    Jeu jeu = Jeu::donneInstance("Arman", false, "Myrtille", Mode::normal, 1);
+    Jeu jeu = Jeu::donneInstance("Arman", false, "Myrtille", Mode::tactique, 1);
     while(jeu.getJoueur1().getVictoires() < jeu.getNbManchesGagnantes() && jeu.getJoueur2().getVictoires() < jeu.getNbManchesGagnantes()){
         jeu.jouerManche();
     }

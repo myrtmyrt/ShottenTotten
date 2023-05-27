@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <string.h>
 
+class Joueur;
+class Borne;
+
 enum class Couleur { rouge, bleu, vert, violet, orange, jaune};
 enum class Nombre { un=1, deux=2, trois=3, quatre=4, cinq=5, six=6, sept=7, huit=8, neuf=9};
 enum class TypeTactique{joker,espion,porteBouclier,colinMaillard,combatBoue,chasseurTete,stratege,banshee,traitre};
@@ -28,12 +31,13 @@ void printTextInColor(Couleur color, Nombre numero);
 
 void printTactique(TypeTactique v);
 
+typedef void (*jouerFonction)(Joueur&, Borne*);
 
 // Abstract base class for cards
 class Carte {
 
 public:
-    virtual void jouer() = 0;
+    virtual void jouer(Joueur& j, Borne* b) = 0;
     virtual void afficher() = 0;
     virtual std::string getType() = 0;
     virtual TypeTactique getNom()=0;
@@ -47,7 +51,7 @@ class Clan : public Carte {
     Couleur _couleur;
 public:
     Clan(Nombre numero, Couleur couleur) : Carte(), _numero(numero), _couleur(couleur) {};
-    void jouer() override {
+    void jouer(Joueur& j, Borne* b) override {
         std::cout << "Playing an attack card." << std::endl;
     }
 
@@ -76,49 +80,20 @@ public:
 
 class Tactique : public Carte {
     TypeTactique _type;
-    void (*effet)();
+    jouerFonction _function;
 public:
-    Tactique(TypeTactique type,void(*e)()):Carte(),_type(type),effet(e) {};
+    Tactique(TypeTactique type, jouerFonction function):Carte(),_type(type),_function(function) {};
 
-    static void jouerJoker(){
+    static void jouerJoker(Joueur& j, Borne* b){
         std::cout << "Playing a joker defense card." << std::endl;
     }
 
-    static void jouerEspion(){
+    static void jouerEspion(Joueur& j, Borne* b){
         std::cout << "Playing a espion defense card." << std::endl;
     }
 
-    static void jouerPorteBouclier(){
-        std::cout << "Playing a porte bouclier defense card." << std::endl;
-    }
 
-    static void jouerColinMaillard(){
-        std::cout << "Playing a colin maillard defense card." << std::endl;
-    }
-
-    static void jouerCombatBoue(){
-        std::cout << "Playing a Combat boue defense card." << std::endl;
-    }
-
-    static void jouerChasseurTete(){
-        std::cout << "Playing a chasseur tete defense card." << std::endl;
-    }
-
-    static void jouerStratege(){
-        std::cout << "Playing a stratege defense card." << std::endl;
-    }
-
-    static void jouerBanshee(){
-        std::cout << "Playing a banshee  defense card." << std::endl;
-    }
-
-    static void jouerTraitre(){
-        std::cout << "Playing a traitre  defense card." << std::endl;
-    }
-
-    void jouer() override {
-        effet();
-    }
+    void jouer(Joueur& j, Borne* b) override;
 
     std::string getType() override {
         return "Tactique";

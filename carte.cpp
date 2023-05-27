@@ -3,6 +3,9 @@
 //
 
 #include "carte.h"
+#include "joueur.h"
+#include "borne.h"
+
 
 std::string toString(Couleur c) {
     switch (c) {
@@ -81,3 +84,6 @@ void printTactique(TypeTactique v) {
     std::cout << "["<<v<<"] ";
 }
 
+void Tactique::jouer(Joueur &j, Borne *b) {
+    _function(j, b);
+}

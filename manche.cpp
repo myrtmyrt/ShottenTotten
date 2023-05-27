@@ -3,22 +3,23 @@
 //
 
 #include "manche.h"
+#include "carte.h"
 
 #define BORNES 9
 
 std::initializer_list<Couleur> Couleurs = { Couleur::rouge, Couleur::bleu, Couleur::vert, Couleur::violet, Couleur::orange, Couleur::jaune };
 std::initializer_list<Nombre> Nombres = { Nombre::un, Nombre::deux, Nombre::trois, Nombre::quatre, Nombre::cinq, Nombre::six, Nombre::sept, Nombre::huit, Nombre::neuf };
 
-std::unordered_map<TypeTactique, void(*)()> TypeTactiques = {
+std::unordered_map<TypeTactique, jouerFonction> TypeTactiques = {
         { TypeTactique::joker, Tactique::jouerJoker },
         { TypeTactique::espion, Tactique::jouerEspion },
-        { TypeTactique::porteBouclier, Tactique::jouerPorteBouclier },
+        /*{ TypeTactique::porteBouclier, Tactique::jouerPorteBouclier },
         { TypeTactique::colinMaillard, Tactique::jouerColinMaillard },
         { TypeTactique::combatBoue, Tactique::jouerCombatBoue },
         { TypeTactique::chasseurTete, Tactique::jouerChasseurTete},
         { TypeTactique::stratege, Tactique::jouerStratege },
         { TypeTactique::banshee, Tactique::jouerBanshee },
-        { TypeTactique::traitre, Tactique::jouerTraitre }
+        { TypeTactique::traitre, Tactique::jouerTraitre }*/
 };
 
 
@@ -38,7 +39,6 @@ Manche::Manche(Jeu &jeu) {
     Mode modeDeJeu = jeu.getModeDeJeu();
     std::vector<Carte*> cartes;
 
-    size_t i = 0;
     for (auto c : Couleurs) {
         for (auto n: Nombres) {
             cartes.push_back(new Clan(n, c));
@@ -52,6 +52,11 @@ Manche::Manche(Jeu &jeu) {
     }
 
     _cartes = cartes;
+
+    _cartes[54]->jouer(jeu.getJoueur1(), _bornes[0]);
+
+    fflush(stdout);
+    system("read");
 
 
     /*

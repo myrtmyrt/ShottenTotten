@@ -163,7 +163,7 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
             suiteNombre[i] = toInt(card->getNombre());
             suiteCouleur[i++] = card->getCouleur();
         }else{
-            card->jouer();
+            //card->jouer();
         }
     }
 
