@@ -1,38 +1,40 @@
 //
-// Created by Myrtille Knockaert on 26/04/2023.
+// Created by Arman Saint-Marc on 24/04/2023.
 //
 
-#ifndef PROJET_JEU_H
-#define PROJET_JEU_H
+#ifndef JEU
+#define JEU
 
-using namespace std;
+#include <iostream>
+#include "joueur.h"
 
-// classe pour gérer les exceptions
-class JeuException {
-public:
-    JeuException(const string& i) :info(i) {}
-    string getInfo() const { return info; }
-private:
-    string info;
-};
+enum class Mode { normal, tactique };
 
+void afficherJoueur1();
 
 class Jeu {
 private:
-    static Jeu *jeuUnique;
-    int _nbManchesGagnantes;
-    int _victoireJoueur1;
-    int _victoireJoueur2;
-    bool _adversaireBot;
-    int _modeDeJeu;
+    static Jeu* _jeuUnique;
+    unsigned int _nbManchesGagnantes;
+    Joueur* _joueur1;
+    Joueur* _joueur2;
+    Mode _modeDeJeu;
 
-    Jeu(int nbManchesGagnantes = 1, bool adversaireBot = true, int modeDeJeu = 1);
+    Jeu(const std::string nomJ1, bool adversaireBot, const std::string nomJ2, Mode modeDeJeu, unsigned int nbManchesGagnantes);
 
 public:
-    int getNbManchesGagnantes() const { return _nbManchesGagnantes; }
-    int getmodeDeJeu() const { return _modeDeJeu; }
-    static Jeu &donneInstance(int nbManchesGagnantes, bool adversaireBot,int modeDeJeu);
+    //GETTERS
+    unsigned int getNbManchesGagnantes() const { return _nbManchesGagnantes; }
+    Joueur& getJoueur1() const { return *_joueur1; }
+    Joueur& getJoueur2() const { return *_joueur2; }
+    Mode getModeDeJeu() const { return _modeDeJeu; }
+
+    static Jeu& donneInstance(const std::string nomJ1, bool adversaireBot = true, const std::string nomJ2 = "Janet", Mode modeDeJeu = Mode::normal, unsigned int nbManchesGagnantes = 1);
     static void libereInstance();
     static Jeu &getInstance();
+
+    void jouerManche();
 };
-#endif //PROJET_JEU_H
+
+#endif //JEU
+

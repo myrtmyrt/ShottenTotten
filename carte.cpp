@@ -2,11 +2,8 @@
 // Created by Myrtille Knockaert on 26/04/2023.
 //
 
-#include <iostream>
 #include "carte.h"
 #include "borne.h"
-#include "joueur.h"
-#include "pioche.h"
 
 using namespace std;
 
@@ -54,17 +51,17 @@ string toString(Nombre v) {
     }
 }
 
-std::ostream &operator<<(std::ostream &f, Couleur c) {
+ostream &operator<<(std::ostream &f, Couleur c) {
     f << toString(c);
     return f;
 }
 
-std::ostream &operator<<(std::ostream &f, Nombre v) {
+ostream &operator<<(std::ostream &f, Nombre v) {
     f << toString(v);
     return f;
 }
 
-Carte effetJoker(Joueur &j, Borne *b) {
+void jouerJoker(Joueur &j, Borne *b,Tactique* joker) {
     Couleur c;
     Nombre n;
     cout << "Donne la couleur de la carte désirée : " << endl;
@@ -131,13 +128,22 @@ Carte effetJoker(Joueur &j, Borne *b) {
         default:
             cout << "Nombre invalide !" << endl;
     }
-    CarteClan* joker=new CarteClan(c, n);
-    b->poserCarte(j, joker);
+    if (j.getId() == 1) {
+        auto posJoker = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(), joker);
+        b->getCartesJoueur1().erase(posJoker);
+    } else {
+        auto posJoker= find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), joker);
+        b->getCartesJoueur2().erase(posJoker);
+    }
+    Clan *newCarte = new Clan(n, c);
+    b->poserCarte(j, newCarte);
 }
 
-Carte effetEspion(Joueur &j, Borne *b) {
+
+void Tactique::jouerEspion(Joueur &j, Borne *b, Tactique *espion) {
     Couleur c;
     Nombre n = Nombre::Sept;
+    // On récupère la couleur de la carte que le joueur choisi
     cout << "Donne la couleur de la carte désirée : " << endl;
     cout << "Rouge(1),Bleu(2), Vert(3), Violet(4), Orange(5), Jaune(6)" << endl;
     int couleurInput;
@@ -166,16 +172,24 @@ Carte effetEspion(Joueur &j, Borne *b) {
         default:
             cout << "Couleur invalide !" << endl;
     }
+    //On récupère le chiffre désiré par le joueur pour la carte
+
     cout << "Donne la nombre en chiffre de la carte désirée (allant de 1 à 9): " << endl;
     int nombreInput;
     cin >> nombreInput;
-
-    CarteClan* espion= new CarteClan(c, n);
-    b->poserCarte(j, espion);
+    if (j.getId() == 1) {
+        auto posEspion = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(), espion);
+        b->getCartesJoueur1().erase(posEspion);
+    } else {
+        auto posEspion = find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), espion);
+        b->getCartesJoueur2().erase(posEspion);
+    }
+    Clan *newCarte = new Clan(n, c);
+    b->poserCarte(j, newCarte);
 
 };
 
-Carte effetPorteBouclier(Joueur &j, Borne *b) {
+void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier) {
     Couleur c;
     Nombre n;
     cout << "Donne la couleur de la carte désirée : " << endl;
@@ -224,24 +238,30 @@ Carte effetPorteBouclier(Joueur &j, Borne *b) {
         default:
             cout << "Nombre invalide !" << endl;
     }
-    CarteClan* porteBouclier= new CarteClan(c, n);
-    b->poserCarte(j, porteBouclier);
+
+    if (j.getId() == 1) {
+        auto posPorteBouclier = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(), porteBouclier);
+        b->getCartesJoueur1().erase(posPorteBouclier);
+    } else {
+        auto posPorteBouclier = find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), porteBouclier);
+        b->getCartesJoueur2().erase(posPorteBouclier);
+    }
+
+    Clan* newCarte = new Clan(n, c);
+    b->poserCarte(j, newCarte);
 }
 
-//Carte effetColinMaillard() {
-//
-//}
 
-Carte effetCombatDeBoue(Borne *b) {
+void jouerCombatDeBoue(Borne *b) {
     b->setNbCartesMax(4);
 }
 
-Carte effetChasseurdeTete(vector<Carte*> p) {
-    for (int i = 0; i <2; i++){
-        Carte* c=new Carte;
-        c=p.piocher();
+void effetChasseurdeTete(vector<Carte *> p) {
+    for (int i = 0; i < 2; i++) {
+        Carte *c = new Carte;
+        c = p.piocher();
     }
-    cout<<"il faut choisir une carte à supprimer"
+    cout << "il faut choisir une carte à supprimer"
 
 }
 
@@ -249,16 +269,43 @@ Carte effetStratege() {
 
 }
 
-Carte effetBanshee(Joueur &adversaire, Borne *borneAdversaire,Carte *c) {
-    borneAdversaire->retirerCarte(adversaire,c);
+Carte effetBanshee(Joueur &adversaire, Borne *borneAdversaire, Carte *c) {
+    borneAdversaire->retirerCarte(adversaire, c);
 }
 
-Carte effetTraitre(Borne *borneAdversaire,Borne *b,Carte *c,Joueur &j,Joueur &adversaire) {
+Carte effetTraitre(Borne *borneAdversaire, Borne *b, Carte *c, Joueur &j, Joueur &adversaire) {
     //vérifier que la carte est bien une carte clan
-    b->poserCarte(j,c);
-    borneAdversaire->retirerCarte(adversaire,c);
+    b->poserCarte(j, c);
+    borneAdversaire->retirerCarte(adversaire, c);
 }
 
+
+void printTextInColor(Couleur color, Nombre numero) {
+    switch (color) {
+        case Couleur::Rouge:
+            std::cout << "\033[31m"; // Set text color to red
+            break;
+        case Couleur::Vert:
+            std::cout << "\033[32m"; // Set text color to green
+            break;
+        case Couleur::Bleu:
+            std::cout << "\033[34m"; // Set text color to blue
+            break;
+        case Couleur::Violet:
+            std::cout << "\033[35m"; // Set text color to blue
+            break;
+        case Couleur::Orange:
+            std::cout << "\033[33m"; // Set text color to blue
+            break;
+        case Couleur::Jaune:
+            std::cout << "\033[93m"; // Set text color to blue
+            break;
+        default:
+            break;
+    }
+
+    std::cout << "[" << numero << "]" << "\033[0m"; // Reset text color to default
+}
 
 
 

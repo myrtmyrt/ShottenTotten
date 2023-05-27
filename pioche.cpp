@@ -9,10 +9,10 @@
 
 using namespace std;
 
-Carte& Pioche::piocher(const type_info& type) {
-    vector<Carte*> cartesTypes;
+void Pioche::piocher(std::string type, Joueur &jou) {
+    std::vector<Carte*> cartesTypes;
     for (Carte* card : _cartes) {
-        if (typeid(*card) == type) {
+        if (card->getType() == type) {
             cartesTypes.push_back(card);
         }
     }
@@ -30,5 +30,6 @@ Carte& Pioche::piocher(const type_info& type) {
 
     _cartes.erase(_cartes.begin()+j);
 
-    return *carte;
+    jou.addCarte(carte);
+
 }

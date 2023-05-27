@@ -1,23 +1,32 @@
-﻿#include "borne.h"
+﻿//
+// Created by Myrtille Knockaert on 26/04/2023.
+//
+
+#include "borne.h"
 
 void Borne::poserCarte(Joueur &j, Carte *c) {
     if (j.getId() == 1) {
         if (_cartesJoueur1.size() < _nbCartesMax) {
             _cartesJoueur1.push_back(c);
+            auto trouverCarte = find(j.getCartes().begin(), j.getCartes().end(),c);
+            j.getCartes().erase(trouverCarte);
             if (_cartesJoueur1.size() == _nbCartesMax) {
-                revendiquer();
+                //revendiquerBorne();
             }
         } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
 
     } else {
         if (_cartesJoueur2.size() < _nbCartesMax) {
             _cartesJoueur2.push_back(c);
+            auto trouverCarte = find(j.getCartes().begin(), j.getCartes().end(),c);
+            j.getCartes().erase(trouverCarte);
             if (_cartesJoueur2.size() == _nbCartesMax) {
-                revendiquer();
+                //revendiquerBorne();
             }
         } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
     }
 }
+
 
 void Borne::retirerCarte(Joueur &j, Carte *c) {
 
@@ -30,4 +39,3 @@ void Borne::retirerCarte(Joueur &j, Carte *c) {
         } else throw "Cette carte n'est pas sur cette borne";
     }
 }
-

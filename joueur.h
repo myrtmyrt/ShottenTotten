@@ -7,23 +7,43 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+
 #include "carte.h"
-#include "manche.h"
-#include "pioche.h"
+
+using namespace std;
 
 class Joueur {
 private:
     unsigned int _id;
-    const Carte** _cartes = nullptr;
-    unsigned int _nbCartes;
-    std::string _pseudo;
+    vector<Carte*> _cartes;
+    string _pseudo;
     bool _bot;
+    unsigned int _nbTactiquesJouees;
+    unsigned int _victoires;
+
 public:
+    //GETTERS
+    unsigned int getId() const { return _id; }
+    vector<Carte*> getCartes() const { return _cartes; }
+    string getPseudo() const { return _pseudo; }
+    bool getIsBot() const { return _bot; }
+    unsigned int getNbTactiquesJouees() const { return _nbTactiquesJouees; }
+    unsigned int getVictoires() const { return _victoires; }
 
-    Joueur(bool bot, bool tactique, const Manche& manche, std::string pseudo = "Janet");
-    unsigned int getId()const {return _id;};
+    //SETTERS
+    void addPoint() { _victoires++; }
+    void addTactiquesJouees() { _nbTactiquesJouees++; }
+    void addCarte(Carte* carte){ _cartes.push_back(carte); }
 
-    ~Joueur();
+    void resetTactiquesJouees() { _nbTactiquesJouees = 0; }
+    void resetCartes() { _cartes.clear(); }
+
+
+    Joueur(unsigned int id, bool bot, std::string pseudo) : _id(id), _pseudo(pseudo), _bot(bot), _nbTactiquesJouees(0), _victoires(0){};
+    ~Joueur() = default;
+
+    void afficherCartes() const;
 };
 
 #endif //JOUEUR
