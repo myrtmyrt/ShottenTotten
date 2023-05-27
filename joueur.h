@@ -35,21 +35,24 @@ public:
     void addPoint() { _victoires++; }
     void addTactiquesJouees() { _nbTactiquesJouees++; }
     void addCarte(Carte* carte){ _cartes.push_back(carte); }
-    void supprimerCarte(unsigned int position){_cartes.erase(_cartes.begin()+position);}
+    void supprimerCarte(iterator position){_cartes.erase(_cartes.begin()+position);}
     void resetTactiquesJouees() {_nbTactiquesJouees = 0; }
     void resetCartes() { _cartes.clear(); }
 
 
-    Joueur(unsigned int id, bool bot, std::string pseudo) : _id(id), _pseudo(pseudo), _bot(bot), _nbTactiquesJouees(0), _victoires(0){};
+    Joueur(unsigned int id, bool bot, string pseudo) : _id(id), _pseudo(pseudo), _bot(bot), _nbTactiquesJouees(0), _victoires(0){};
     ~Joueur() = default;
 
     void afficherCartes() const;
     bool contientCombatDeBoue(){
         for (unsigned int i = 0; i < _cartes.size(); i++) {
             if (_cartes[i]->getType()=="Tactique") {
-                if (_cartes[i])
+                if (_cartes[i]->getNom()==TypeTactique::CombatBoue){
+                    return true;
+                };
             }
         }
+        return false;
     }
 };
 

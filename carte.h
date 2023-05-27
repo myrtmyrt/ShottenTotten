@@ -59,6 +59,7 @@ public:
     virtual void afficher() = 0;
 
     virtual std::string getType() = 0;
+    virtual TypeTactique getNom()=0;
 };
 
 // Concrete card classes
@@ -84,7 +85,9 @@ public:
     void afficher() override {
         printTextInColor(_couleur, _numero);
     }
-
+    TypeTactique getNom() override {
+        cout<<"Impossible car c'est une carte clan";
+    };
 };
 
 class Tactique : public Carte {
@@ -95,7 +98,7 @@ class Tactique : public Carte {
 public:
     Tactique(TypeTactique type, void(*e)()) : Carte(), type(type), effet(e) {};
 
-    TypeTactique getId() const { return type; }
+    TypeTactique getNom() const { return type; }
 
     void jouerJoker(Joueur &j, Borne *b,Tactique* joker);
 
