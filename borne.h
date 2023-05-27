@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include "carte.h"
 #include "joueur.h"
 
@@ -27,7 +28,7 @@ public:
 
     //SETTERS
     void setGagnant(Joueur* j) { _gagnant = j; }
-    void setNbCartesMax(Joueur* j) { _gagnant = j; }
+    void setNbCartesMax(size_t t) { _nbCartesMax = t;}
 
     //Contructeur, destructeur, recopie par défaut
     Borne(size_t numero) : _gagnant(nullptr), _nbCartesMax(3), _numero(numero){}

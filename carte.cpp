@@ -256,10 +256,10 @@ void jouerCombatDeBoue(Borne *b) {
     b->setNbCartesMax(4);
 }
 
-void effetChasseurdeTete(vector<Carte *> p) {
+void effetChasseurdeTete(Pioche p) {
     for (int i = 0; i < 2; i++) {
-        Carte *c = new Carte;
-        c = p.piocher();
+        Carte* c = new Carte();
+        p.piocher();
     }
     cout << "il faut choisir une carte à supprimer"
 
