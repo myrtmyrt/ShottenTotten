@@ -256,12 +256,19 @@ void jouerCombatDeBoue(Borne *b) {
     b->setNbCartesMax(4);
 }
 
-void effetChasseurdeTete(Pioche p) {
+void effetChasseurdeTete(Joueur& j, Pioche p,Borne* b) {
     for (int i = 0; i < 2; i++) {
-        Carte* c = new Carte();
-        p.piocher();
+        b->poserCarte(j,p.piocher(p.getCartes()));
+
     }
-    cout << "il faut choisir une carte à supprimer"
+    cout << "il faut choisir une carte à supprimer"<<endl;
+    cout<<"Tapez le numéro de la premiere carte à supprimer "<<endl;
+    unsigned int c1;
+    cin>>c1;
+    cout<<"Tapez le numéro de la premiere carte à supprimer "<<endl;
+    unsigned int c2;
+    cin>>c2;
+
 
 }
 

@@ -23,8 +23,8 @@ class Pioche {
 private:
     vector<Carte*> _cartes;
 public:
-
-    Pioche(vector<Carte*> cartes);
+    Pioche(vector<Carte*> c):_cartes(c){};
+    vector<Carte*> getCartes() const { return _cartes;}
 
     void piocher(string type, Joueur &jou);
 
