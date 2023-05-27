@@ -124,6 +124,16 @@ void Jeu::jouerManche(){
 
         mancheActuelle->getPioche().piocher("Clan", *_joueur1);
 
+        if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
+            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant() == 1){
+                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
+            }else{
+                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
+
+            }
+
+        }
+
 
 
         afficherJoueur2();
@@ -163,6 +173,15 @@ void Jeu::jouerManche(){
         mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur2, _joueur2->getCartes()[choiceCarte-1]);
 
         mancheActuelle->getPioche().piocher("Clan", *_joueur2);
+
+        if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
+            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant() == 1){
+                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
+            }else{
+                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
+
+            }
+        }
 
     }
 

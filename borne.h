@@ -48,7 +48,7 @@ public:
 
     bool estPleine(Joueur &j) const;
 
-    void trouverGagnant();
+    unsigned int trouverGagnant();
     unsigned int calculerPoints(std::vector<Carte*> _cartesJoueur);
 
 };

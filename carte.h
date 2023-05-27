@@ -126,6 +126,14 @@ public:
     }
 
     TypeTactique getNom() override { return _type; }
+
+    Nombre getNombre() override {
+        std::cout<<"Tactique"<<std::endl;
+    };
+
+    Couleur getCouleur() override {
+        std::cout<<"Tactique"<<std::endl;
+    };
 };
 
 #endif //CARTE

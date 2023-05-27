@@ -116,8 +116,28 @@ bool Borne::estPleine(Joueur &j) const {
     }
 }
 
-void Borne::trouverGagnant(){
+unsigned int Borne::trouverGagnant(unsigned int idPremier){
     bool estSomme = false;
+
+    unsigned int pointsJ1 = calculerPoints(_cartesJoueur1);
+    unsigned int pointsJ2 = calculerPoints(_cartesJoueur2);
+
+    std::cout<<pointsJ1<<" points"<<std::endl;
+    std::cout<<pointsJ2<<" points"<<std::endl;
+
+    if(pointsJ1 > pointsJ2){
+        return 1;
+    }else if(pointsJ2 > pointsJ1){
+        return 2;
+    }else{
+        if(idPremier == 1){
+            return 1;
+        }else{
+            return 2;
+        }
+    }
+
+    //AJOUTER CAS OU EGALITÉ
 }
 
 unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
@@ -135,7 +155,7 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
      * Traiter toutes les cartes du J1
      */
     size_t i = 0;
-    for (Carte* card : _cartesJoueur1) {
+    for (Carte* card : _cartesJoueur) {
         if(card->getType() == "Clan") {
             suiteNombre[i] = toInt(card->getNombre());
             suiteCouleur[i++] = card->getCouleur();
@@ -149,7 +169,7 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
      */
     for(int i=0; i<taille; i++)
     {
-        for(int j=i+1; j<4; j++) {
+        for(int j=i+1; j<taille; j++) {
             if(suiteNombre[i]>suiteNombre[j])
             {
                 int temp = suiteNombre[i];
@@ -164,7 +184,7 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
      */
     for(int i=0; i<taille; i++)
     {
-        if(i != _nbCartesMax-1){
+        if(i != taille-1){
             if(suiteNombre[i]+1 != suiteNombre[i+1]){
                 estSuite = false;
             }
@@ -176,9 +196,9 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
      */
     for(int i=0; i<taille; i++)
     {
-        if(i != _nbCartesMax-1){
+        if(i != taille-1){
             if(suiteNombre[i] != suiteNombre[i+1]){
-                estSuite = false;
+                estBrelan = false;
             }
         }
     }
@@ -188,11 +208,20 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
      */
     for(int i=0; i<taille; i++)
     {
-        if(i != _nbCartesMax-1){
+        if(i != taille-1){
             if(suiteCouleur[i] != suiteCouleur[i+1]){
                 estCouleur = false;
             }
         }
+    }
+
+    /*
+     * Somme du tableau
+     */
+    unsigned int somme = 0;
+    for(int i=0; i<taille; i++)
+    {
+        somme += suiteNombre[i];
     }
 
     /*
@@ -203,17 +232,19 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
     }
 
     if(estSuiteCouleur){
-
+        return somme+50*4;
     }else if(estBrelan){
-
+        return somme+50*3;
     }else if(estCouleur){
-
+        return somme+50*2;
     }else if(estSuite){
-
+        return somme+50;
     }else{
-
+        return somme;
     }
 }
+
+
 
 int toInt(Nombre n){
     switch (n) {
