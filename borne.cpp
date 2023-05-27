@@ -119,11 +119,15 @@ bool Borne::estPleine(Joueur &j) const {
 unsigned int Borne::trouverGagnant(unsigned int idPremier){
     bool estSomme = false;
 
+    //PArcourrir cartes de fond en comble
+
     unsigned int pointsJ1 = calculerPoints(_cartesJoueur1);
     unsigned int pointsJ2 = calculerPoints(_cartesJoueur2);
 
-    std::cout<<pointsJ1<<" points"<<std::endl;
-    std::cout<<pointsJ2<<" points"<<std::endl;
+    if(estSomme == true){
+        pointsJ1 = pointsJ1%50;
+        pointsJ2 = pointsJ2%50;
+    }
 
     if(pointsJ1 > pointsJ2){
         return 1;
@@ -137,7 +141,6 @@ unsigned int Borne::trouverGagnant(unsigned int idPremier){
         }
     }
 
-    //AJOUTER CAS OU EGALITÉ
 }
 
 unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
@@ -243,8 +246,6 @@ unsigned int Borne::calculerPoints(std::vector<Carte *> _cartesJoueur) {
         return somme;
     }
 }
-
-
 
 int toInt(Nombre n){
     switch (n) {

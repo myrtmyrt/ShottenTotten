@@ -31,6 +31,7 @@ public:
     ~Manche() { delete _pioche; }
 
     void afficherBornes() const;
+    bool verifGagnant(Joueur& jou) const;
 };
 
 

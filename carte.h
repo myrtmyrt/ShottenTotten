@@ -18,12 +18,15 @@ enum class TypeTactique{joker,espion,porteBouclier,colinMaillard,combatBoue,chas
 // conversion d'une caractéristique en string
 std::string toString(Couleur c);
 std::string toString(Nombre v);
+std::string toString(TypeTactique v);
 
 // écriture d'une caractéristique sur un flux ostream
 std::ostream& operator<<(std::ostream& f, Couleur c);
 std::ostream& operator<<(std::ostream& f, Nombre v);
 
 void printTextInColor(Couleur color, Nombre numero);
+
+void printTactique(TypeTactique v);
 
 
 // Abstract base class for cards
@@ -122,7 +125,7 @@ public:
     }
 
     void afficher() override{
-        std::cout<<"Tactique"<<std::endl;
+        printTactique(_type);
     }
 
     TypeTactique getNom() override { return _type; }

@@ -81,7 +81,7 @@ void Jeu::jouerManche(){
      * Création de manche
      */
     const Manche* mancheActuelle = new Manche(*_jeuUnique);
-
+    unsigned int gagnant = 0;
     /*
      * Jouer manche
      */
@@ -125,14 +125,24 @@ void Jeu::jouerManche(){
         mancheActuelle->getPioche().piocher("Clan", *_joueur1);
 
         if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
-            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant() == 1){
+            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(2) == 1){
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
             }else{
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
-
             }
 
+            bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
+            if(isGagnant == true){
+                gagnant = 1;
+                break;
+            }
+            isGagnant = mancheActuelle->verifGagnant(*_joueur2);
+            if(isGagnant == true){
+                gagnant = 2;
+                break;
+            }
         }
+
 
 
 
@@ -175,19 +185,31 @@ void Jeu::jouerManche(){
         mancheActuelle->getPioche().piocher("Clan", *_joueur2);
 
         if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
-            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant() == 1){
+            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(1) == 1){
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
             }else{
                 mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
+            }
 
+            bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
+            if(isGagnant == true){
+                gagnant = 1;
+                break;
+            }
+            isGagnant = mancheActuelle->verifGagnant(*_joueur2);
+            if(isGagnant == true){
+                gagnant = 2;
+                break;
             }
         }
 
     }
 
+    if(gagnant == 1){
+        _joueur1->addPoint();
+    }else{
+        _joueur2->addPoint();
+    }
 
-
-
-    _joueur1->addPoint();
     return;
 }

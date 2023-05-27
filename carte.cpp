@@ -31,8 +31,24 @@ std::string toString(Nombre v) {
     }
 }
 
+std::string toString(TypeTactique v) {
+    switch (v) {
+        case TypeTactique::porteBouclier: return "Porte bouclier";
+        case TypeTactique::espion: return "Espion";
+        case TypeTactique::joker: return "Joker";
+        case TypeTactique::colinMaillard: return "Colin maillard";
+        case TypeTactique::combatBoue: return "Combat boue";
+        case TypeTactique::chasseurTete: return "Chasseur tête";
+        case TypeTactique::stratege: return "Stratege";
+        case TypeTactique::banshee: return "Banshee";
+        case TypeTactique::traitre: return "Traitre";
+        default: std::cout<<"erreur";
+    }
+}
+
 std::ostream& operator<<(std::ostream& f, Couleur c) { f << toString(c); return f; }
 std::ostream& operator<<(std::ostream& f, Nombre v) {	f << toString(v); return f; }
+std::ostream& operator<<(std::ostream& f, TypeTactique v) {	f << toString(v); return f; }
 
 void printTextInColor(Couleur color, Nombre numero) {
     switch (color) {
@@ -60,3 +76,8 @@ void printTextInColor(Couleur color, Nombre numero) {
 
     std::cout << "["<<numero<<"]" << "\033[m "; // Reset text color to default
 }
+
+void printTactique(TypeTactique v) {
+    std::cout << "["<<v<<"] ";
+}
+

@@ -25,10 +25,11 @@ public:
     //GETTERS
     std::vector<Carte*> getCartesJoueur1() const { return _cartesJoueur1; }
     std::vector<Carte*> getCartesJoueur2() const { return _cartesJoueur2; }
-    Joueur& getGagnant() const { return *_gagnant; }
+    Joueur* getGagnant() const { return _gagnant; }
 
     //SETTERS
     void setGagnant(Joueur* j) { _gagnant = j; }
+    void setNbCartesMax(unsigned int t){_nbCartesMax=t;}
 
     //Contructeur, destructeur, recopie par défaut
     Borne(size_t numero) : _gagnant(nullptr), _nbCartesMax(3), _numero(numero){}
@@ -48,7 +49,7 @@ public:
 
     bool estPleine(Joueur &j) const;
 
-    unsigned int trouverGagnant();
+    unsigned int trouverGagnant(unsigned int idPremier);
     unsigned int calculerPoints(std::vector<Carte*> _cartesJoueur);
 
 };

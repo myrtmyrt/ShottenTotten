@@ -83,3 +83,33 @@ void Manche::afficherBornes() const {
         borne->afficher();
     }
 }
+
+bool Manche::verifGagnant(Joueur& jou) const{
+    unsigned int bornesWin = 0;
+    unsigned int bornesMaxSuiteWin = 0;
+    unsigned int bornesSuiteWin = 0;
+    unsigned int idLastWin = jou.getId();
+
+    for (Borne* borne : _bornes) {
+        if(borne->getGagnant() != nullptr) {
+            if (borne->getGagnant()->getId() == jou.getId()) {
+                bornesWin++;
+                if (idLastWin == jou.getId()) {
+                    bornesSuiteWin++;
+                } else {
+                    if (bornesSuiteWin > bornesMaxSuiteWin) {
+                        bornesMaxSuiteWin = bornesSuiteWin;
+                    }
+                    bornesSuiteWin = 1;
+                }
+            }
+            idLastWin = jou.getId();
+        }
+    }
+
+    if(bornesMaxSuiteWin >= 3 || bornesWin >= 5){
+        return true;
+    }else{
+        return false;
+    }
+}
