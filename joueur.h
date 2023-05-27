@@ -34,6 +34,9 @@ public:
     void addTactiquesJouees() { _nbTactiquesJouees++; }
     void addCarte(Carte* carte){ _cartes.push_back(carte); }
 
+    void resetTactiquesJouees() { _nbTactiquesJouees = 0; }
+    void resetCartes() { _cartes.clear(); }
+
 
     Joueur(unsigned int id, bool bot, std::string pseudo) : _id(id), _pseudo(pseudo), _bot(bot), _nbTactiquesJouees(0), _victoires(0){};
     ~Joueur() = default;

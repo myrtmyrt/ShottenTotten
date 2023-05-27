@@ -65,9 +65,9 @@ Manche::Manche(Jeu &jeu) {
      */
     for (size_t j = 0; j < 7; ++j) {
         if(j == 6){
-            if(modeDeJeu == Mode::tactique){
-                _pioche->piocher("Tactique", jeu.getJoueur1());
-                _pioche->piocher("Tactique", jeu.getJoueur2());
+            if(modeDeJeu == Mode::tactique) {
+                _pioche->piocher("Clan", jeu.getJoueur1());
+                _pioche->piocher("Clan", jeu.getJoueur2());
             }
         }else{
             _pioche->piocher("Clan", jeu.getJoueur1());

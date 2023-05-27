@@ -6,13 +6,13 @@ using namespace std;
 
 void afficherTitre(){
     system("clear");
-    cout<<endl<<endl<<"      __      _           _   _               _____      _   _             "<<endl;
-    cout<<"     / _\\ ___| |__   ___ | |_| |_ ___ _ __   /__   \\___ | |_| |_ ___ _ __  "<<endl;
-    cout<<"     \\ \\ / __| '_ \\ / _ \\| __| __/ _ \\ '_ \\    / /\\/ _ \\| __| __/ _ \\ '_ \\ "<<endl;
-    cout<<"     _\\ \\ (__| | | | (_) | |_| ||  __/ | | |  / / | (_) | |_| ||  __/ | | |"<<endl;
-    cout<<"     \\__/\\___|_| |_|\\___/ \\__|\\__\\___|_| |_|  \\/   \\___/ \\__|\\__\\___|_| |_|"<<endl;
-    cout<<"                                                                           "<<endl;
-    cout<<"     ----------------------------------------------------------------------"<<endl;
+    cout<<endl<<endl<<"\t __      _           _   _               _____      _   _             "<<endl;
+    cout<<"\t/ _\\ ___| |__   ___ | |_| |_ ___ _ __   /__   \\___ | |_| |_ ___ _ __  "<<endl;
+    cout<<"\t\\ \\ / __| '_ \\ / _ \\| __| __/ _ \\ '_ \\    / /\\/ _ \\| __| __/ _ \\ '_ \\ "<<endl;
+    cout<<"\t_\\ \\ (__| | | | (_) | |_| ||  __/ | | |  / / | (_) | |_| ||  __/ | | |"<<endl;
+    cout<<"\t\\__/\\___|_| |_|\\___/ \\__|\\__\\___|_| |_|  \\/   \\___/ \\__|\\__\\___|_| |_|"<<endl;
+    cout<<"\t                                                                      "<<endl;
+    cout<<"\t----------------------------------------------------------------------"<<endl;
 }
 
 int main(int argc, char **argv) {
@@ -33,27 +33,27 @@ int main(int argc, char **argv) {
      * Récupération du/des joueurs
      */
     afficherTitre();
-    cout<<"     1 - Un joueur et une I.A"<<endl;
-    cout<<"     2 - Deux joueurs"<<endl;
-    cout<<"     3 - Quitter le jeu"<<endl<<endl;
+    cout<<"\t1 - Un joueur et une I.A"<<endl;
+    cout<<"\t2 - Deux joueurs"<<endl;
+    cout<<"\t3 - Quitter le jeu"<<endl<<endl;
 
     int action = -1;
-    cout<<"     Choisissez le programme : ";
+    cout<<"\tChoisissez le programme : ";
     cin>>action;
 
     afficherTitre();
     switch (action) {
         case 1:
             bot = true;
-            cout<<endl<<"     Votre pseudo : ";
+            cout<<endl<<"\tVotre pseudo : ";
             cin>>nomJ1;
             break;
         case 2:
             bot = false;
-            cout<<endl<<"     Pseudo du joueur 1 : ";
+            cout<<endl<<"\tPseudo du joueur 1 : ";
             cin>>nomJ1;
 
-            cout<<endl<<"     Pseudo du joueur 2 : ";
+            cout<<endl<<"\tPseudo du joueur 2 : ";
             cin>>nomJ2;
             break;
         default:
@@ -65,11 +65,11 @@ int main(int argc, char **argv) {
      * Récupération du mode de jeu
      */
     afficherTitre();
-    cout<<"     1 - Normal"<<endl;
-    cout<<"     2 - Tactique"<<endl<<endl;
+    cout<<"\t1 - Normal"<<endl;
+    cout<<"\t2 - Tactique"<<endl<<endl;
 
     action = -1;
-    cout<<"     Choisissez le programme : ";
+    cout<<"\tChoisissez le programme : ";
     cin>>action;
 
 
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
      * Récupération du nombre de manches gagnantes
      */
     afficherTitre();
-    cout<<endl<<"     Nombre de manches gagnantes : ";
+    cout<<endl<<"\tNombre de manches gagnantes : ";
     cin>>nbManchesGagnantes;
 
     system("clear");

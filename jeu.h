@@ -10,6 +10,8 @@
 
 enum class Mode { normal, tactique };
 
+void afficherJoueur1();
+
 class Jeu {
 private:
     static Jeu* _jeuUnique;
