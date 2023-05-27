@@ -259,11 +259,11 @@ void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier) 
 }
 
 
-void Tactique::jouerCombatDeBoue(Borne *b) {
+void Tactique::jouerCombatBoue(Borne *b) {
     b->setNbCartesMax(4);
 }
 
-void Tactique::jouerChasseurDeTete(Joueur& j, Pioche p,Borne* b,string t) {
+void Tactique::jouerChasseurTete(Joueur& j, Pioche p,Borne* b,string t) {
     for (int i = 0; i < 2; i++) {
         if (j.getId()==1){
             p.piocher(t,j);
@@ -321,11 +321,15 @@ void Tactique::jouerBanshee(Joueur &j, Manche* m) {
 }
 
 void Tactique::jouerTraitre(Joueur &j,Manche* m) {
-    cout<<"Tapez le numéro de la borne de votre adversaire que vous souhaitez déplacer de votre côté"<<endl;
     unsigned int indexBorne;
+    cout<<"Tapez le numéro de la borne de votre adversaire ou se situe la carte que vous souhaitez déplacer de votre côté"<<endl;
+    cin>>indexBorne;
     unsigned int indexCarte;
-    cout<<"Tapez le numéro de la borne sur laquelle vous souhaitez poser la carte "<<endl;
+    cout<<"Tapez le numéro de la carte que vous souhaitez déplacer de votre côté "<<endl;
+    cin>>indexCarte;
     unsigned int index2;
+    cout<<"Tapez le numéro de la borne sur laquelle vous souhaitez poser la carte "<<endl;
+    cin>>index2;
     //on vérifie que la carte est bien une carte clan
     if (m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]->getType()=="Clan"){
         if (j.getId()==1){

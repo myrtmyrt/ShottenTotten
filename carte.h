@@ -117,22 +117,23 @@ public:
 
     TypeTactique getNom() const { return type; }
 
-
-    static void jouerJoker(Joueur &j, Borne *b, Tactique *joker);
+    static void jouerJoker(Joueur &j, Borne *b,Tactique* joker);
 
     static void jouerEspion(Joueur &j, Borne *b, Tactique *espion);
 
     static void jouerPorteBouclier(Joueur &j, Borne *b, Tactique *porteBouclier);
 
-    static void jouerCombatDeBoue(Borne *b);
+    static void jouerColinMaillard(){};
 
-    static void jouerChasseurDeTete(Joueur &j, Pioche p, Borne *b, string t);
+    static void jouerCombatBoue(Borne *b);
+
+    static void jouerChasseurTete(Joueur &j, Pioche p, Borne *b, string t);
 
     static void jouerStratege(Joueur &j, Pioche p, Manche *m, string t);
 
     static void jouerBanshee(Joueur &j, Manche *m);
 
-    static void jouerTraitre(Joueur &j, Manche *m);
+    static void jouerTraitre(Joueur &j,Manche* m);
 
     void jouer() override {
         effet();
