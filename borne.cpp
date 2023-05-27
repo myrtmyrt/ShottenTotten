@@ -8,6 +8,9 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
     if (j.getId() == 1) {
         if (_cartesJoueur1.size() < _nbCartesMax) {
             _cartesJoueur1.push_back(c);
+
+            j.supprimerCarte(c);
+
             if (_cartesJoueur1.size() == _nbCartesMax) {
                 //revendiquerBorne();
             }
@@ -16,13 +19,15 @@ void Borne::poserCarte(Joueur &j, Carte *c) {
     } else {
         if (_cartesJoueur2.size() < _nbCartesMax) {
             _cartesJoueur2.push_back(c);
+
+            j.supprimerCarte(c);
+
             if (_cartesJoueur2.size() == _nbCartesMax) {
                 //revendiquerBorne();
             }
         } else throw "Attention : nombre max atteint, vous ne pouvez pas ajouter une carte.";
     }
 }
-
 
 void Borne::retirerCarte(Joueur &j, Carte *c) {
 
@@ -54,8 +59,22 @@ void Borne::afficher() const {
     if(_gagnant != nullptr){
         std::cout<<"| Borne "<<_numero+1<<" (gagnée par "<<_gagnant->getPseudo()<<") | ";
     }else{
-        std::cout<<" | Borne "<<_numero+1<<" | ";
+        std::cout<<"| Borne "<<_numero+1<<" | ";
     }
     afficherCartesJ2();
     std::cout<<"- J2"<<std::endl;
+}
+
+bool Borne::estPleine(Joueur &j) const {
+    size_t taille;
+    for (unsigned int i = 0; i < j.getCartes().size(); i++) {
+        if (j.getCartes()[i].getType() == "Clan") {
+            taille++;
+        }
+    }
+    if(_nbCartesMax >= taille){
+
+    }else{
+        
+    }
 }

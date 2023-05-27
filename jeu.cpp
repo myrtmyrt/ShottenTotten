@@ -87,18 +87,82 @@ void Jeu::jouerManche(){
      */
     while(1){
         afficherJoueur1();
-        std::cout<<"\tCartes de "<<_joueur1->getPseudo()<<" : ";
+        std::cout<<std::endl<<std::endl<<"\tCartes de "<<_joueur1->getPseudo()<<" : ";
         _joueur1->afficherCartes();
 
         mancheActuelle->afficherBornes();
 
-        int choice;
-        std::cin>>choice;
+        unsigned int choiceBorne = 0;
+        bool borneVerif = false;
+
+
+        while(choiceBorne == 0 || borneVerif == false){
+            std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez une borne (n°) : ";
+            std::cin>>choiceBorne;
+            if(mancheActuelle->getBornes().size() >= choiceBorne && mancheActuelle->getBornes()[choiceBorne-1]->estPleinne(*_joueur1) == false){
+                borneVerif = true;
+            }else{
+                borneVerif = false;
+                std::cout<<std::endl<<"\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
+            }
+        }
+
+        unsigned int choiceCarte = 0;
+        bool carteVerif = false;
+        while(choiceCarte == 0 || carteVerif == false){
+            std::cout<<std::endl<<"\t2 - Sélectionnez une carte (n°) : ";
+            std::cin>>choiceCarte;
+            if(_joueur1->getCartes().size() >= choiceCarte && (_joueur1->getCartes()[choiceCarte-1]->getType() == "Clan" || (_joueur1->getCartes()[choiceCarte-1]->getType() == "Tactique" && _joueur1->getNbTactiquesJouees() < _joueur2->getNbTactiquesJouees()+1)) ){
+                carteVerif = true;
+            }else{
+                carteVerif = false;
+                std::cout<<std::endl<<"\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la jouer !"<<std::endl;
+            }
+        }
+
+        mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur1, _joueur1->getCartes()[choiceCarte-1]);
+
+        mancheActuelle->getPioche().piocher("Clan", *_joueur1);
+
+
 
         afficherJoueur2();
-        std::cout<<"\tCartes de "<<_joueur2->getPseudo()<<" : ";
+        std::cout<<std::endl<<std::endl<<"\tCartes de "<<_joueur2->getPseudo()<<" : ";
         _joueur2->afficherCartes();
-        std::cin>>choice;
+
+        mancheActuelle->afficherBornes();
+
+        choiceBorne = 0;
+        borneVerif = false;
+
+
+        while(choiceBorne == 0 || borneVerif == false){
+            std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez une borne (n°) : ";
+            std::cin>>choiceBorne;
+            if(mancheActuelle->getBornes().size() >= choiceBorne && mancheActuelle->getBornes()[choiceBorne-1]->estPleinne(*_joueur2) == false){
+                borneVerif = true;
+            }else{
+                borneVerif = false;
+                std::cout<<std::endl<<"\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
+            }
+        }
+
+        choiceCarte = 0;
+        carteVerif = false;
+        while(choiceCarte == 0 || carteVerif == false){
+            std::cout<<std::endl<<"\t2 - Sélectionnez une carte (n°) : ";
+            std::cin>>choiceCarte;
+            if(_joueur2->getCartes().size() >= choiceCarte && (_joueur2->getCartes()[choiceCarte-1]->getType() == "Clan" || (_joueur2->getCartes()[choiceCarte-1]->getType() == "Tactique" && _joueur2->getNbTactiquesJouees() < _joueur1->getNbTactiquesJouees()+1)) ){
+                carteVerif = true;
+            }else{
+                carteVerif = false;
+                std::cout<<std::endl<<"\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la jouer !"<<std::endl;
+            }
+        }
+
+        mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur2, _joueur2->getCartes()[choiceCarte-1]);
+
+        mancheActuelle->getPioche().piocher("Clan", *_joueur1);
 
     }
 

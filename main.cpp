@@ -16,6 +16,22 @@ void afficherTitre(){
 }
 
 int main(int argc, char **argv) {
+    Jeu jeu = Jeu::donneInstance("Arman", false, "Myrtille", Mode::normal, 3);
+    while(jeu.getJoueur1().getVictoires() < jeu.getNbManchesGagnantes() && jeu.getJoueur2().getVictoires() < jeu.getNbManchesGagnantes()){
+        jeu.jouerManche();
+    }
+
+    /*
+     * Affichage du gagnant
+     */
+    if(jeu.getJoueur1().getVictoires() >= jeu.getNbManchesGagnantes()){
+        cout<<jeu.getJoueur1().getPseudo()<<" a gagné le jeu !!!!";
+    }else{
+        cout<<jeu.getJoueur2().getPseudo()<<" a gagné le jeu !!!!";
+    }
+}
+
+int test(int argc, char **argv) {
 
     /*
      * Création des variables nécessaires pour jouer

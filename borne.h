@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "carte.h"
 #include "joueur.h"
@@ -42,6 +43,9 @@ public:
     void afficherCartesJ1() const;
     void afficherCartesJ2() const;
     //void revendiquerBorne();
+
+    bool estPleine(Joueur &j) const;
+
 };
 
 

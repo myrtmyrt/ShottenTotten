@@ -32,7 +32,9 @@ public:
     //SETTERS
     void addPoint() { _victoires++; }
     void addTactiquesJouees() { _nbTactiquesJouees++; }
-    void addCarte(Carte* carte){ _cartes.push_back(carte); }
+
+    void addCarte(Carte* carte);
+    void supprimerCarte(Carte* carte);
 
     void resetTactiquesJouees() { _nbTactiquesJouees = 0; }
     void resetCartes() { _cartes.clear(); }
