@@ -37,26 +37,26 @@ std::ostream& operator<<(std::ostream& f, Nombre v) {	f << toString(v); return f
 void printTextInColor(Couleur color, Nombre numero) {
     switch (color) {
         case Couleur::rouge:
-            std::cout << "\033[31m"; // Set text color to red
+            std::cout << "\033[31m"; // Mettre texte en rouge
             break;
         case Couleur::vert:
-            std::cout << "\033[32m"; // Set text color to green
+            std::cout << "\033[32m"; // Mettre texte en vert
             break;
         case Couleur::bleu:
-            std::cout << "\033[34m"; // Set text color to blue
+            std::cout << "\033[34m"; // Mettre texte en bleu
             break;
         case Couleur::violet:
-            std::cout << "\033[35m"; // Set text color to blue
+            std::cout << "\033[35m"; // Mettre texte en violet
             break;
         case Couleur::orange:
-            std::cout << "\033[33m"; // Set text color to blue
+            std::cout << "\033[38;5;208m"; // Mettre texte en orange
             break;
         case Couleur::jaune:
-            std::cout << "\033[93m"; // Set text color to blue
+            std::cout << "\033[93m"; // Mettre texte en jaune
             break;
         default:
             break;
     }
 
-    std::cout << "["<<numero<<"]" << "\033[0m"; // Reset text color to default
+    std::cout << "["<<numero<<"]" << "\033[m "; // Reset text color to default
 }

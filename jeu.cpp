@@ -6,6 +6,7 @@
 #include "manche.h"
 
 void afficherJoueur1(){
+    system("clear");
     std::cout<<"\t       _                               __ "<<std::endl;
     std::cout<<"\t      | |                             /_ |"<<std::endl;
     std::cout<<"\t      | | ___  _   _  ___ _   _ _ __   | |"<<std::endl;
@@ -14,6 +15,23 @@ void afficherJoueur1(){
     std::cout<<"\t  \\____/ \\___/ \\__,_|\\___|\\__,_|_|     |_|"<<std::endl;
     std::cout<<"\t                                          "<<std::endl;
     std::cout<<"\t------------------------------------------"<<std::endl;
+    std::cout<<"\tAppuyez sur entrer pour continuer : ";
+    fflush(stdout);
+    system("read");
+    system("clear");
+
+}
+
+void afficherJoueur2(){
+    system("clear");
+    std::cout<<"\t       _                               ___  "<<std::endl;
+    std::cout<<"\t      | |                             |__ \\ "<<std::endl;
+    std::cout<<"\t      | | ___  _   _  ___ _   _ _ __     ) |"<<std::endl;
+    std::cout<<"\t  _   | |/ _ \\| | | |/ _ \\ | | | '__|   / / "<<std::endl;
+    std::cout<<"\t | |__| | (_) | |_| |  __/ |_| | |     / /_ "<<std::endl;
+    std::cout<<"\t  \\____/ \\___/ \\__,_|\\___|\\__,_|_|    |____|"<<std::endl;
+    std::cout<<"\t                                          "<<std::endl;
+    std::cout<<"\t--------------------------------------------"<<std::endl;
 
 }
 
@@ -47,11 +65,6 @@ Jeu& Jeu::getInstance() { return *_jeuUnique; }
 
 void Jeu::jouerManche(){
     /*
-     * Création de manche
-     */
-    const Manche* mancheActuelle = new Manche(*_jeuUnique);
-
-    /*
      * On reset les données du joueur
      */
     _joueur1->resetCartes();
@@ -61,15 +74,23 @@ void Jeu::jouerManche(){
     _joueur2->resetTactiquesJouees();
 
     /*
+     * Création de manche
+     */
+    const Manche* mancheActuelle = new Manche(*_jeuUnique);
+
+    /*
      * Jouer manche
      */
     while(1){
         afficherJoueur1();
         int choice;
-        std::cout<<"\tTour de "<<_joueur1->getPseudo()<<" : ";
+        std::cout<<"\tCartes de "<<_joueur1->getPseudo()<<" : ";
+        _joueur1->afficherCartes();
         std::cin>>choice;
 
+        afficherJoueur2();
         std::cout<<"\tTour de "<<_joueur2->getPseudo()<<" : ";
+        std::cin>>choice;
 
     }
 

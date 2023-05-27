@@ -11,6 +11,7 @@
 enum class Mode { normal, tactique };
 
 void afficherJoueur1();
+void afficherJoueur2();
 
 class Jeu {
 private:
