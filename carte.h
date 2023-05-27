@@ -9,6 +9,7 @@
 #include "carte.h"
 #include "borne.h"
 #include "pioche.h"
+#include "manche.h"
 
 using namespace std;
 
@@ -22,22 +23,22 @@ enum class TypeTactique {
     Joker, Espion, PorteBouclier, ColinMaillard, CombatBoue, ChasseurTete, Stratege, Banshee, Traitre
 };
 
-// conversion d'une caractéristique en string
-string toString(Couleur c);
+//// conversion d'une caractéristique en string
+//string toString(Couleur c);
 
 string toString(Nombre v);
 
-// écriture d'une caractéristique sur un flux ostream
-ostream &operator<<(ostream &f, Couleur c);
+//// écriture d'une caractéristique sur un flux ostream
+//ostream &operator<<(ostream &f, Couleur c);
 
 ostream &operator<<(ostream &f, Nombre v);
 
 
 void printTextInColor(Couleur color, Nombre numero);
 
-// listes contenant les valeurs possibles pour chacune des caractéristiques
-extern std::initializer_list<Couleur> Couleurs;
-extern std::initializer_list<Nombre> Nombres;
+//// listes contenant les valeurs possibles pour chacune des caractéristiques
+//extern std::initializer_list<Couleur> Couleurs;
+//extern std::initializer_list<Nombre> Nombres;
 
 // classe pour gérer les exceptions
 class CarteException {
@@ -60,6 +61,9 @@ public:
 
     virtual std::string getType() = 0;
     virtual TypeTactique getNom()=0;
+    virtual Nombre getNombre() = 0;
+    virtual Couleur getCouleur() = 0;
+
 };
 
 // Concrete card classes
@@ -82,6 +86,14 @@ public:
         return "Clan";
     }
 
+    Nombre getNombre() override {
+        return _numero;
+    };
+
+    Couleur getCouleur() override {
+        return _couleur;
+    };
+
     void afficher() override {
         printTextInColor(_couleur, _numero);
     }
@@ -100,23 +112,22 @@ public:
 
     TypeTactique getNom() const { return type; }
 
+
     void jouerJoker(Joueur &j, Borne *b,Tactique* joker);
 
-    void jouerEspion(Joueur &j, Borne *b,Tactique* porteBouclier);
+    void jouerEspion(Joueur &j, Borne *b, Tactique *espion);
 
-    void jouerPorteBouclier(Joueur &j, Borne *b,Tactique* porteBouclier);
+    void jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier);
 
-    void jouerColinMaillard();
+    void jouerCombatDeBoue(Borne *b);
 
-    void jouerCombatBoue();
+    void jouerChasseurDeTete(Joueur& j, Pioche p,Borne* b,string t);
 
-    void jouerChasseurTete(vector<Carte *> p);
+    void jouerStratege(Joueur& j, Pioche p,Manche* m,string t);
 
-    void jouerStratege();
+    void jouerBanshee(Joueur &j, Manche* m);
 
-    void jouerBanshee();
-
-    void jouerTraitre();
+    void jouerTraitre(Joueur &j,Manche* m);
 
     void jouer() override {
         effet();
@@ -125,6 +136,15 @@ public:
     std::string getType() override {
         return "Tactique";
     }
+
+    Nombre getNombre() override {
+        std::cout<<"Tactique"<<std::endl;
+    };
+
+    Couleur getCouleur() override {
+        std::cout<<"Tactique"<<std::endl;
+    };
+
 
     void afficher() override {
         std::cout << "Tactique" << std::endl;

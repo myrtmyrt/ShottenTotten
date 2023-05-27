@@ -7,24 +7,24 @@
 
 using namespace std;
 
-string toString(Couleur c) {
-    switch (c) {
-        case Couleur::Rouge:
-            return "R";
-        case Couleur::Violet:
-            return "Vi";
-        case Couleur::Vert:
-            return "V";
-        case Couleur::Bleu:
-            return "B";
-        case Couleur::Orange:
-            return "O";
-        case Couleur::Jaune:
-            return "J";
-        default:
-            throw CarteException("Couleur inconnue");
-    }
-}
+//string toString(Couleur c) {
+//    switch (c) {
+//        case Couleur::Rouge:
+//            return "R";
+//        case Couleur::Violet:
+//            return "Vi";
+//        case Couleur::Vert:
+//            return "V";
+//        case Couleur::Bleu:
+//            return "B";
+//        case Couleur::Orange:
+//            return "O";
+//        case Couleur::Jaune:
+//            return "J";
+//        default:
+//            throw CarteException("Couleur inconnue");
+//    }
+//}
 
 string toString(Nombre v) {
     switch (v) {
@@ -61,7 +61,7 @@ ostream &operator<<(std::ostream &f, Nombre v) {
     return f;
 }
 
-void jouerJoker(Joueur &j, Borne *b,Tactique* joker) {
+void Tactique::jouerJoker(Joueur &j, Borne *b,Tactique* joker) {
     Couleur c;
     Nombre n;
     cout << "Donne la couleur de la carte désirée : " << endl;
@@ -178,11 +178,9 @@ void Tactique::jouerEspion(Joueur &j, Borne *b, Tactique *espion) {
     int nombreInput;
     cin >> nombreInput;
     if (j.getId() == 1) {
-        auto posEspion = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(), espion);
-        b->getCartesJoueur1().erase(posEspion);
+        b->getCartesJoueur1().supprimerCarte(espion);
     } else {
-        auto posEspion = find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), espion);
-        b->getCartesJoueur2().erase(posEspion);
+        b->getCartesJoueur1().supprimerCarte(espion);
     }
     Clan *newCarte = new Clan(n, c);
     b->poserCarte(j, newCarte);
@@ -240,11 +238,9 @@ void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier) 
     }
 
     if (j.getId() == 1) {
-        auto posPorteBouclier = find(b->getCartesJoueur1().begin(), b->getCartesJoueur1().end(), porteBouclier);
-        b->getCartesJoueur1().erase(posPorteBouclier);
+        b->getCartesJoueur1().supprimerCarte(porteBouclier);
     } else {
-        auto posPorteBouclier = find(b->getCartesJoueur2().begin(), b->getCartesJoueur2().end(), porteBouclier);
-        b->getCartesJoueur2().erase(posPorteBouclier);
+        b->getCartesJoueur2().supprimerCarte(porteBouclier);
     }
 
     Clan* newCarte = new Clan(n, c);
@@ -252,13 +248,17 @@ void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Tactique* porteBouclier) 
 }
 
 
-void jouerCombatDeBoue(Borne *b) {
+void Tactique::jouerCombatDeBoue(Borne *b) {
     b->setNbCartesMax(4);
 }
 
-void effetChasseurdeTete(Joueur& j, Pioche p,Borne* b) {
+void Tactique::jouerChasseurDeTete(Joueur& j, Pioche p,Borne* b,string t) {
     for (int i = 0; i < 2; i++) {
-        b->poserCarte(j,p.piocher(p.getCartes()));
+        if (j.getId()==1){
+            b->poserCarte(j,p.piocher(t,j));
+        }else{
+            b->poserCarte(j,p.piocher(t,j));
+        }
 
     }
     cout << "il faut choisir une carte à supprimer"<<endl;
@@ -268,22 +268,68 @@ void effetChasseurdeTete(Joueur& j, Pioche p,Borne* b) {
     cout<<"Tapez le numéro de la premiere carte à supprimer "<<endl;
     unsigned int c2;
     cin>>c2;
-
-
-}
-
-Carte effetStratege() {
+    b->retirerCarte(j.getCartes()[c1]);
+    b->retirerCarte(j.getCartes()[c2]);
 
 }
 
-Carte effetBanshee(Joueur &adversaire, Borne *borneAdversaire, Carte *c) {
-    borneAdversaire->retirerCarte(adversaire, c);
+void Tactique::jouerStratege(Joueur& j, Pioche p,Manche* m,string t) {
+    //choisissez une carte Clan ou Tactique de votre côté de la frontière sur une Borne non revendiquée.
+    cout<<"Tapez le numéro de la borne sur laquelle vous souhaitez déplacer ou défausser une carte"<<endl;
+    unsigned int indexBorne;
+    cout<<"Tapez le numéro de la carte que vous souhaitez déplacer ou défausser sur la borne n°"<<indexBorne<<endl;
+    unsigned int indexCarte;
+    cout<<"Souhaitez vous la défausser (tapez 0) ou la place sur une autre borne(tapez le numero de la borne laquelle vous souhaitez placer la carte)";
+    unsigned int action;
+    if(action>0 and action<10){
+        if (j.getId()==1){
+            m->getBornes()[action]->poserCarte( m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        }else{
+            m->getBornes()[action]->poserCarte( m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
+        }
+    }
+    if (j.getId()==1){
+        m->getBornes()[indexBorne]->retirerCarte( m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+    }else{
+        m->getBornes()[indexBorne]->retirerCarte( m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
+    }
 }
 
-Carte effetTraitre(Borne *borneAdversaire, Borne *b, Carte *c, Joueur &j, Joueur &adversaire) {
-    //vérifier que la carte est bien une carte clan
-    b->poserCarte(j, c);
-    borneAdversaire->retirerCarte(adversaire, c);
+void Tactique::jouerBanshee(Joueur &j, Manche* m) {
+    //choisissez une carte Clan ou Tactique du côté adverse de la frontière sur une Borne non revendiquée et défaussez-la face
+    //visible à côté de la pioche.
+    cout<<"Tapez le numéro de la borne sur laquelle vous souhaitez déplacer ou défausser une carte"<<endl;
+    unsigned int indexBorne;
+    cout<<"Tapez le numéro de la carte que vous souhaitez déplacer ou défausser sur la borne n°"<<indexBorne<<endl;
+    unsigned int indexCarte;
+    if (j.getId()==1){
+        m->getBornes()[indexBorne]->retirerCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+    }else{
+        m->getBornes()[indexBorne]->retirerCarte( m->getBornes()[indexBorne]->getCartesJoueur2()[indexCarte]);
+    }
+}
+
+void Tactique::jouerTraitre(Joueur &j,Manche* m) {
+    cout<<"Tapez le numéro de la borne de votre adversaire que vous souhaitez déplacer de votre côté"<<endl;
+    unsigned int indexBorne;
+    unsigned int indexCarte;
+    cout<<"Tapez le numéro de la borne sur laquelle vous souhaitez poser la carte "<<endl;
+    unsigned int index2;
+    //on vérifie que la carte est bien une carte clan
+    if (m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]->getType()=="Clan"){
+        if (j.getId()==1){
+            m->getBornes()[index2]->getCartesJoueur1()->poserCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        }else{
+            m->getBornes()[index2]->getCartesJoueur2()->poserCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        }
+        if (j.getId()==1){
+            m->getBornes()[indexBorne]->retirerCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        }else{
+            m->getBornes()[indexBorne]->retirerCarte(m->getBornes()[indexBorne]->getCartesJoueur1()[indexCarte]);
+        }
+    } else throw "La carte choisie n'est pas une carte clan";
+
+
 }
 
 

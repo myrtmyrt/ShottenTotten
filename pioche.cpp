@@ -1,15 +1,16 @@
 //
 // Created by Myrtille Knockaert on 26/04/2023.
 //
-#include <iostream>
-#include "carte.h"
-#include "borne.h"
-#include "joueur.h"
+
 #include "pioche.h"
 
 using namespace std;
 
-void Pioche::piocher(std::string type, Joueur &jou) {
+Pioche::Pioche(vector<Carte*> cartes) {
+    _cartes = cartes;
+}
+
+void Pioche::piocher(string type, Joueur &jou) {
     std::vector<Carte*> cartesTypes;
     for (Carte* card : _cartes) {
         if (card->getType() == type) {
@@ -33,3 +34,4 @@ void Pioche::piocher(std::string type, Joueur &jou) {
     jou.addCarte(carte);
 
 }
+

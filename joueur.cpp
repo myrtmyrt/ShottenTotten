@@ -10,4 +10,14 @@ void Joueur::afficherCartes() const{
     }
 }
 
+void Joueur::addCarte(Carte *carte) {
+    _cartes.push_back(carte);
+}
+
+void Joueur::supprimerCarte(Carte *carte) {
+    auto position = std::find(_cartes.begin(), _cartes.end(), carte);
+    _cartes.erase(position);
+}
+
+
 

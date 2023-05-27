@@ -6,6 +6,7 @@
 #include "carte.h"
 #include "pioche.h"
 #include "manche.h"
+#include <unordered_map>
 
 #define BORNES 9
 
@@ -15,15 +16,15 @@ initializer_list<Nombre> Nombres = {Nombre::Un, Nombre::Deux, Nombre::Trois, Nom
                                     Nombre::Sept, Nombre::Huit, Nombre::Neuf};
 
 unordered_map<TypeTactique, void (*)()> TypeTactiques = {
-        {TypeTactique::joker,         Tactique::jouerJoker},
-        {TypeTactique::espion,        Tactique::jouerEspion},
-        {TypeTactique::porteBouclier, Tactique::jouerPorteBouclier},
-        {TypeTactique::colinMaillard, Tactique::jouerColinMaillard},
-        {TypeTactique::combatBoue,    Tactique::jouerCombatBoue},
-        {TypeTactique::chasseurTete,  Tactique::jouerChasseurTete},
-        {TypeTactique::stratege,      Tactique::jouerStratege},
-        {TypeTactique::banshee,       Tactique::jouerBanshee},
-        {TypeTactique::traitre,       Tactique::jouerTraitre}
+        {TypeTactique::Joker,         Tactique::jouerJoker},
+        {TypeTactique::Espion,        Tactique::jouerEspion},
+        {TypeTactique::PorteBouclier, Tactique::jouerPorteBouclier},
+        {TypeTactique::ColinMaillard, Tactique::jouerColinMaillard},
+        {TypeTactique::CombatBoue,    Tactique::jouerCombatBoue},
+        {TypeTactique::ChasseurTete,  Tactique::jouerChasseurTete},
+        {TypeTactique::Stratege,      Tactique::jouerStratege},
+        {TypeTactique::Banshee,       Tactique::jouerBanshee},
+        {TypeTactique::Traitre,       Tactique::jouerTraitre}
 };
 
 
