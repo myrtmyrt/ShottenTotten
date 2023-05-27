@@ -38,7 +38,9 @@ public:
     void retirerCarte(Joueur& j, Carte* c);
 
     //Afficher une borne
-    void afficherBorne() const;
+    void afficher() const;
+    void afficherCartesJ1() const;
+    void afficherCartesJ2() const;
     //void revendiquerBorne();
 };
 

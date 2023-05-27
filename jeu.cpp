@@ -32,6 +32,10 @@ void afficherJoueur2(){
     std::cout<<"\t  \\____/ \\___/ \\__,_|\\___|\\__,_|_|    |____|"<<std::endl;
     std::cout<<"\t                                          "<<std::endl;
     std::cout<<"\t--------------------------------------------"<<std::endl;
+    std::cout<<"\tAppuyez sur entrer pour continuer : ";
+    fflush(stdout);
+    system("read");
+    system("clear");
 
 }
 
@@ -83,13 +87,17 @@ void Jeu::jouerManche(){
      */
     while(1){
         afficherJoueur1();
-        int choice;
         std::cout<<"\tCartes de "<<_joueur1->getPseudo()<<" : ";
         _joueur1->afficherCartes();
+
+        mancheActuelle->afficherBornes();
+
+        int choice;
         std::cin>>choice;
 
         afficherJoueur2();
-        std::cout<<"\tTour de "<<_joueur2->getPseudo()<<" : ";
+        std::cout<<"\tCartes de "<<_joueur2->getPseudo()<<" : ";
+        _joueur2->afficherCartes();
         std::cin>>choice;
 
     }

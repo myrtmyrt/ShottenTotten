@@ -35,3 +35,27 @@ void Borne::retirerCarte(Joueur &j, Carte *c) {
         } else throw "Cette carte n'est pas sur cette borne";
     }
 }
+
+void Borne::afficherCartesJ1() const{
+    for (Carte* card : _cartesJoueur1) {
+        card->afficher();
+    }
+}
+
+void Borne::afficherCartesJ2() const{
+    for (Carte* card : _cartesJoueur2) {
+        card->afficher();
+    }
+}
+
+void Borne::afficher() const {
+    std::cout<<"\tJ1 - ";
+    afficherCartesJ1();
+    if(_gagnant != nullptr){
+        std::cout<<"| Borne "<<_numero+1<<" (gagnée par "<<_gagnant->getPseudo()<<") | ";
+    }else{
+        std::cout<<" | Borne "<<_numero+1<<" | ";
+    }
+    afficherCartesJ2();
+    std::cout<<"- J2"<<std::endl;
+}

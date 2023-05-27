@@ -76,3 +76,10 @@ Manche::Manche(Jeu &jeu) {
     }
 
 }
+
+void Manche::afficherBornes() const {
+    std::cout<<std::endl<<std::endl;
+    for (Borne* borne : _bornes) {
+        borne->afficher();
+    }
+}

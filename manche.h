@@ -29,6 +29,8 @@ public:
 
     Manche(Jeu& jeu);
     ~Manche() { delete _pioche; }
+
+    void afficherBornes() const;
 };
 
 
