@@ -146,7 +146,7 @@ unsigned int Borne::trouverGagnant(unsigned int idPremier, Joueur& J1, Joueur& J
             if(card->getNom() == TypeTactique::colinMaillard){
                 estSomme = true;
             }
-            card->jouer(J1, this, manche);
+            card->effet(J1, this, manche);
         }
     }
 
@@ -155,7 +155,7 @@ unsigned int Borne::trouverGagnant(unsigned int idPremier, Joueur& J1, Joueur& J
             if(card->getNom() == TypeTactique::colinMaillard){
                 estSomme = true;
             }
-            card->jouer(J2, this, manche);
+            card->effet(J2, this, manche);
         }
     }
 

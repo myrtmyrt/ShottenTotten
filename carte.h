@@ -14,6 +14,7 @@
 class Joueur;
 class Borne;
 class Manche;
+class Jeu;
 
 enum class Couleur { rouge, bleu, vert, violet, orange, jaune};
 enum class Nombre { un=1, deux=2, trois=3, quatre=4, cinq=5, six=6, sept=7, huit=8, neuf=9};
@@ -32,13 +33,15 @@ void printTextInColor(Couleur color, Nombre numero);
 
 void printTactique(TypeTactique v);
 
-typedef void (*jouerFonction)(Joueur&, Borne*, Manche*);
+typedef bool (*jouerFonction)(Manche* manche, Joueur& j, Jeu* jeu);
+typedef void (*effetFonction)(Joueur& j, Borne* b, Manche* m);
 
 // Abstract base class for cards
 class Carte {
 
 public:
-    virtual void jouer(Joueur& j, Borne* b, Manche* m) = 0;
+    virtual bool jouer(Manche* manche, Joueur& j, Jeu* jeu) = 0;
+    virtual void effet(Joueur& j, Borne* b, Manche* m) = 0;
     virtual void afficher() = 0;
     virtual std::string getType() = 0;
     virtual TypeTactique getNom()=0;
@@ -52,9 +55,11 @@ class Clan : public Carte {
     Couleur _couleur;
 public:
     Clan(Nombre numero, Couleur couleur) : Carte(), _numero(numero), _couleur(couleur) {};
-    void jouer(Joueur& j, Borne* b, Manche* m) override {
+    void effet(Joueur& j, Borne* b, Manche* m) override {
         std::cout << "Playing an attack card." << std::endl;
     }
+
+    bool jouer(Manche* manche, Joueur& j, Jeu* jeu) override;
 
     std::string getType() override {
         return "Clan";
@@ -81,30 +86,50 @@ public:
 
 class Tactique : public Carte {
     TypeTactique _type;
-    jouerFonction _function;
+    jouerFonction _jouer;
+    effetFonction _effet;
 public:
-    Tactique(TypeTactique type, jouerFonction function):Carte(),_type(type),_function(function) {};
+    Tactique(TypeTactique type, jouerFonction jouer, effetFonction effet):Carte(),_type(type),_jouer(jouer),_effet(effet) {};
 
-    static void jouerJoker(Joueur& j, Borne* b, Manche* m);
+    static bool jouerJoker(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerEspion(Joueur& j, Borne* b, Manche* m);
+    static bool jouerEspion(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerPorteBouclier(Joueur& j, Borne* b, Manche* m);
+    static bool jouerPorteBouclier(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerColinMaillard(Joueur& j, Borne* b, Manche* m);
+    static bool jouerColinMaillard(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerCombatBoue(Joueur& j, Borne* b, Manche* m);
+    static bool jouerCombatBoue(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerChasseurTete(Joueur& j, Borne* b, Manche* m);
+    static bool jouerChasseurTete(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerStratege(Joueur& j, Borne* b, Manche* m);
+    static bool jouerStratege(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerBanshee(Joueur& j, Borne* b, Manche* m);
+    static bool jouerBanshee(Manche* manche, Joueur& j, Jeu* jeu);
 
-    static void jouerTraitre(Joueur& j, Borne* b, Manche* m);
+    static bool jouerTraitre(Manche* manche, Joueur& j, Jeu* jeu);
 
+    static void effetJoker(Joueur& j, Borne* b, Manche* m);
 
-    void jouer(Joueur& j, Borne* b, Manche* m) override;
+    static void effetEspion(Joueur& j, Borne* b, Manche* m);
+
+    static void effetPorteBouclier(Joueur& j, Borne* b, Manche* m);
+
+    static void effetColinMaillard(Joueur& j, Borne* b, Manche* m);
+
+    static void effetCombatBoue(Joueur& j, Borne* b, Manche* m);
+
+    static void effetChasseurTete(Joueur& j, Borne* b, Manche* m);
+
+    static void effetStratege(Joueur& j, Borne* b, Manche* m);
+
+    static void effetBanshee(Joueur& j, Borne* b, Manche* m);
+
+    static void effetTraitre(Joueur& j, Borne* b, Manche* m);
+
+    void effet(Joueur& j, Borne* b, Manche* m) override;
+
+    bool jouer(Manche* manche, Joueur& j, Jeu* jeu) override;
 
     std::string getType() override {
         return "Tactique";

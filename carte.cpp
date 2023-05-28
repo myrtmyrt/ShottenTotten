@@ -6,6 +6,7 @@
 #include "joueur.h"
 #include "borne.h"
 #include "manche.h"
+#include "jeu.h"
 
 using namespace std;
 
@@ -86,11 +87,49 @@ void printTactique(TypeTactique v) {
     std::cout << "["<<v<<"] ";
 }
 
-void Tactique::jouer(Joueur &j, Borne *b, Manche* m) {
-    _function(j, b, m);
+
+bool Clan::jouer(Manche* manche, Joueur &j, Jeu* jeu) {
+    unsigned int choiceBorne = 0;
+
+    std::cout<<std::endl<<std::endl<<"\t2 - Sélectionnez une borne (n°) : ";
+    std::cin>>choiceBorne;
+    if(manche->getBornes().size() >= choiceBorne && choiceBorne != 0 && manche->getBornes()[choiceBorne-1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                                                                                     nullptr){
+
+        manche->getBornes()[choiceBorne-1]->poserCarte(j, this);
+
+        if(jeu->getModeDeJeu() == Mode::normal){
+            manche->getPioche().piocher("Clan", j);
+        }else{
+            int choicePioche = 0;
+            while(choicePioche != 1 && choicePioche != 2){
+                std::cout<<std::endl<<"\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                std::cin>>choicePioche;
+            }
+            if(choicePioche == 1){
+                manche->getPioche().piocher("Clan", j);
+            }else{
+                manche->getPioche().piocher("Tactique", j);
+            }
+        }
+
+        return true;
+    }else{
+        std::cout<<std::endl<<"\t\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
+        return false;
+    }
 }
 
-void Tactique::jouerJoker(Joueur &j, Borne *b, Manche* m) {
+void Tactique::effet(Joueur &j, Borne *b, Manche *m) {
+    _effet(j, b, m);
+}
+
+bool Tactique::jouer(Manche* manche, Joueur& j, Jeu* jeu) {
+    return _jouer(manche, j, jeu);
+}
+
+
+void Tactique::effetJoker(Joueur &j, Borne *b, Manche* m) {
     Couleur c;
     Nombre n;
     cout << "Donne la couleur de la carte désirée : " << endl;
@@ -184,7 +223,7 @@ void Tactique::jouerJoker(Joueur &j, Borne *b, Manche* m) {
 
 }
 
-void Tactique::jouerEspion(Joueur &j, Borne *b, Manche* m) {
+void Tactique::effetEspion(Joueur &j, Borne *b, Manche* m) {
     Couleur c;
     Nombre n = Nombre::sept;
 
@@ -243,7 +282,7 @@ void Tactique::jouerEspion(Joueur &j, Borne *b, Manche* m) {
 
 };
 
-void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Manche* m) {
+void Tactique::effetPorteBouclier(Joueur &j, Borne *b, Manche* m) {
     Couleur c;
     Nombre n;
     cout << "Donne la couleur de la carte désirée : " << endl;
@@ -319,218 +358,560 @@ void Tactique::jouerPorteBouclier(Joueur &j, Borne *b, Manche* m) {
 
 }
 
-void Tactique::jouerColinMaillard(Joueur &j, Borne *b, Manche* m) {}
+void Tactique::effetColinMaillard(Joueur &j, Borne *b, Manche* m) {}
 
-void Tactique::jouerCombatBoue(Joueur &j, Borne *b, Manche* m) {
-        b->setNbCartesMax(4);
+void Tactique::effetCombatBoue(Joueur &j, Borne *b, Manche* m) {
 }
 
-void Tactique::jouerChasseurTete(Joueur &j, Borne *b, Manche *m) {
-    for (int i = 0; i < 3; ++i) {
-        int choicePioche = 0;
-        while(choicePioche != 1 && choicePioche != 2){
-            std::cout<<std::endl<<"\t"<<i<<" - Piocher carte (1 : Clan, 2 : Tactique) : ";
-            std::cin>>choicePioche;
-        }
-        if(choicePioche == 1){
-            m->getPioche().piocher("Clan", j);
-        }else{
-            m->getPioche().piocher("Tactique", j);
-        }
-    }
+void Tactique::effetChasseurTete(Joueur &j, Borne *b, Manche *m) {
+}
+
+void Tactique::effetStratege(Joueur &j, Borne *b, Manche *m) {}
+
+void Tactique::effetBanshee(Joueur &j, Borne *b, Manche *m) {}
+
+void Tactique::effetTraitre(Joueur &j, Borne *b, Manche *m) {}
 
 
-    for (int i = 0; i < 2; ++i) {
-        j.afficherCartes();
-        unsigned int choiceCarte = 0;
-        bool carteVerif = false;
-        while (choiceCarte == 0 || carteVerif == false) {
-            std::cout << std::endl << "\t" << i << " - Sélectionnez une carte (n°) : ";
-            std::cin >> choiceCarte;
-            if (j.getCartes().size() >= choiceCarte && choiceCarte != 0) {
-                carteVerif = true;
+/*
+ * Jouer les cartes tactiques
+ */
+bool Tactique::jouerJoker(Manche* manche, Joueur& j, Jeu* jeu){
+
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
+
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 &&
+            manche->getBornes()[choiceBorne - 1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                           nullptr) {
+
+            Carte* joker;
+            for (Carte *card: j.getCartes()) {
+                if(card->getType() == "Tactique" && card->getNom() == TypeTactique::joker){
+                    joker = card;
+                }
+            }
+            manche->getBornes()[choiceBorne - 1]->poserCarte(j, joker);
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
             } else {
-                carteVerif = false;
-                std::cout << std::endl << "\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la jouer !"
-                          << std::endl;
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
             }
-        }
 
-        j.supprimerCarte(j.getCartes()[choiceCarte-1]);
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
+        }
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
     }
 }
 
-void Tactique::jouerStratege(Joueur &j, Borne *b, Manche *m) {
-    unsigned int choiceBorne = 0;
-    bool borneVerif = false;
+bool Tactique::jouerEspion(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
 
-    m->afficherBornes();
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 &&
+            manche->getBornes()[choiceBorne - 1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                           nullptr) {
 
-    while(choiceBorne == 0 || borneVerif == false){
-        std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez la borne (n°) : ";
-        std::cin>>choiceBorne;
-        if(m->getBornes().size() >= choiceBorne && choiceBorne != 0 && m->getBornes()[choiceBorne-1]->getGagnant() == nullptr){
-            borneVerif = true;
-        }else{
-            borneVerif = false;
-            std::cout<<std::endl<<"\t\tErreur - La borne ne peut pas être choisie !"<<std::endl;
-        }
-    }
-
-    Carte* carteChoisie;
-    unsigned int choiceCarte = 0;
-    bool carteVerif = false;
-    while(choiceCarte == 0 || carteVerif == false){
-        std::cout<<std::endl<<"\t2 - Sélectionnez la carte (n°) : ";
-        std::cin>>choiceCarte;
-        if(j.getId() == 1){
-            if(m->getBornes()[choiceBorne-1]->getCartesJoueur1().size() >= choiceCarte && choiceCarte != 0 ){
-                carteVerif = true;
-                carteChoisie = m->getBornes()[choiceBorne-1]->getCartesJoueur1()[choiceCarte];
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la prendre !"<<std::endl;
+            Carte* espion;
+            for (Carte *card: j.getCartes()) {
+                if(card->getType() == "Tactique" && card->getNom() == TypeTactique::espion){
+                    espion = card;
+                }
             }
-        }else{
-            if(m->getBornes()[choiceBorne-1]->getCartesJoueur2().size() >= choiceCarte && choiceCarte != 0 ){
-                carteVerif = true;
-                carteChoisie = m->getBornes()[choiceBorne-1]->getCartesJoueur2()[choiceCarte];
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la prendre !"<<std::endl;
+            manche->getBornes()[choiceBorne - 1]->poserCarte(j, espion);
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
             }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
         }
-
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
     }
-
-    //Possibilité supprimer carte
-
-    unsigned int choiceBorneNew = 0;
-    bool borneVerifNew = false;
-
-    while(choiceBorneNew == 0 || borneVerifNew == false){
-        std::cout<<std::endl<<std::endl<<"\t3 - Sélectionnez la borne de destination (n°) : ";
-        std::cin>>choiceBorneNew;
-        if(m->getBornes().size() >= choiceBorne && choiceBorne != 0 && m->getBornes()[choiceBorne-1]->estPleine(j) == false){
-            borneVerif = true;
-        }else{
-            borneVerif = false;
-            std::cout<<std::endl<<"\t\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
-        }
-    }
-
-    m->getBornes()[choiceBorne-1]->retirerCarte(j, carteChoisie);
-
-    m->getBornes()[choiceBorneNew-1]->changerCarte(j, carteChoisie);
-
 }
 
-void Tactique::jouerBanshee(Joueur &j, Borne *b, Manche *m) {
-    unsigned int choiceBorne = 0;
-    bool borneVerif = false;
+bool Tactique::jouerPorteBouclier(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
 
-    m->afficherBornes();
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 &&
+            manche->getBornes()[choiceBorne - 1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                           nullptr) {
 
-    while(choiceBorne == 0 || borneVerif == false){
-        std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez la borne adverse (n°) : ";
-        std::cin>>choiceBorne;
-        if(m->getBornes().size() >= choiceBorne && choiceBorne != 0 && m->getBornes()[choiceBorne-1]->getGagnant() == nullptr){
-            borneVerif = true;
-        }else{
-            borneVerif = false;
-            std::cout<<std::endl<<"\t\tErreur - La borne ne peut pas être choisie !"<<std::endl;
-        }
-    }
-
-    Carte* carteChoisie;
-    unsigned int choiceCarte = 0;
-    bool carteVerif = false;
-    while(choiceCarte == 0 || carteVerif == false){
-        std::cout<<std::endl<<"\t2 - Sélectionnez la carte (n°) : ";
-        std::cin>>choiceCarte;
-        if(j.getId() == 1){
-            if(m->getBornes()[choiceBorne-1]->getCartesJoueur2().size() >= choiceCarte && choiceCarte != 0 ){
-                carteVerif = true;
-                carteChoisie = m->getBornes()[choiceBorne-1]->getCartesJoueur2()[choiceCarte];
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la prendre !"<<std::endl;
+            Carte* porteBouclier;
+            for (Carte *card: j.getCartes()) {
+                if(card->getType() == "Tactique" && card->getNom() == TypeTactique::porteBouclier){
+                    porteBouclier = card;
+                }
             }
-        }else{
-            if(m->getBornes()[choiceBorne-1]->getCartesJoueur1().size() >= choiceCarte && choiceCarte != 0 ){
-                carteVerif = true;
-                carteChoisie = m->getBornes()[choiceBorne-1]->getCartesJoueur1()[choiceCarte];
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la prendre !"<<std::endl;
+            manche->getBornes()[choiceBorne - 1]->poserCarte(j, porteBouclier);
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
             }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
         }
-
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
     }
-
-    m->getBornes()[choiceBorne-1]->retirerCarte(j, carteChoisie);
-
 }
 
-void Tactique::jouerTraitre(Joueur &j, Borne *b, Manche *m) {
-    unsigned int choiceBorne = 0;
-    bool borneVerif = false;
+bool Tactique::jouerColinMaillard(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
 
-    m->afficherBornes();
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                           nullptr) {
 
-    while(choiceBorne == 0 || borneVerif == false){
-        std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez la borne adverse (n°) : ";
-        std::cin>>choiceBorne;
-        if(m->getBornes().size() >= choiceBorne && choiceBorne != 0 && m->getBornes()[choiceBorne-1]->getGagnant() == nullptr){
-            borneVerif = true;
-        }else{
-            borneVerif = false;
-            std::cout<<std::endl<<"\t\tErreur - La borne ne peut pas être choisie !"<<std::endl;
-        }
-    }
-
-    Carte* carteChoisie;
-    unsigned int choiceCarte = 0;
-    bool carteVerif = false;
-    while(choiceCarte == 0 || carteVerif == false){
-        std::cout<<std::endl<<"\t2 - Sélectionnez la carte (n°) : ";
-        std::cin>>choiceCarte;
-        if(j.getId() == 1){
-            if(m->getBornes()[choiceBorne-1]->getCartesJoueur2().size() >= choiceCarte && choiceCarte != 0 && m->getBornes()[choiceBorne-1]->getCartesJoueur2()[choiceCarte]->getType() == "Clan"){
-                carteVerif = true;
-                carteChoisie = m->getBornes()[choiceBorne-1]->getCartesJoueur2()[choiceCarte];
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la prendre !"<<std::endl;
+            Carte* colinMaillard;
+            for (Carte *card: j.getCartes()) {
+                if(card->getType() == "Tactique" && card->getNom() == TypeTactique::colinMaillard){
+                    colinMaillard = card;
+                }
             }
-        }else{
-            if(m->getBornes()[choiceBorne-1]->getCartesJoueur1().size() >= choiceCarte && choiceCarte != 0 && m->getBornes()[choiceBorne-1]->getCartesJoueur1()[choiceCarte]->getType() == "Clan"){
-                carteVerif = true;
-                carteChoisie = m->getBornes()[choiceBorne-1]->getCartesJoueur1()[choiceCarte];
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la prendre !"<<std::endl;
+            manche->getBornes()[choiceBorne - 1]->poserCarte(j, colinMaillard);
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
+            }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
+        }
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
+    }
+}
+
+bool Tactique::jouerCombatBoue(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
+
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                             nullptr) {
+
+            Carte* combatBoue;
+            for (Carte *card: j.getCartes()) {
+                if(card->getType() == "Tactique" && card->getNom() == TypeTactique::combatBoue){
+                    combatBoue = card;
+                }
+            }
+            manche->getBornes()[choiceBorne - 1]->poserCarte(j, combatBoue);
+            manche->getBornes()[choiceBorne - 1]->setNbCartesMax(4);
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
+            }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
+        }
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
+    }
+}
+
+bool Tactique::jouerChasseurTete(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        for (int i = 0; i < 3; ++i) {
+            int choicePioche = 0;
+            while (choicePioche != 1 && choicePioche != 2) {
+                std::cout << std::endl << "\t" << i + 1 << " - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                std::cin >> choicePioche;
+            }
+            if (choicePioche == 1) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                manche->getPioche().piocher("Tactique", j);
             }
         }
 
-    }
-
-    unsigned int choiceBorneNew = 0;
-    bool borneVerifNew = false;
-
-    while(choiceBorneNew == 0 || borneVerifNew == false){
-        std::cout<<std::endl<<std::endl<<"\t3 - Sélectionnez la borne de destination (n°) : ";
-        std::cin>>choiceBorneNew;
-        if(m->getBornes().size() >= choiceBorne && choiceBorne != 0 && m->getBornes()[choiceBorne-1]->estPleine(j) == false){
-            borneVerif = true;
-        }else{
-            borneVerif = false;
-            std::cout<<std::endl<<"\t\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
+        Carte* chasseurTete;
+        for (Carte *card: j.getCartes()) {
+            if(card->getType() == "Tactique" && card->getNom() == TypeTactique::chasseurTete){
+                chasseurTete = card;
+            }
         }
+        j.supprimerCarte(chasseurTete);
+
+        for (int i = 0; i < 2; ++i) {
+            j.afficherCartes();
+            unsigned int choiceCarte = 0;
+            bool carteVerif = false;
+            while (choiceCarte == 0 || carteVerif == false) {
+                std::cout << std::endl << "\t" << i << " - Sélectionnez une carte à jetter (n°) : ";
+                std::cin >> choiceCarte;
+                if (j.getCartes().size() >= choiceCarte && choiceCarte != 0) {
+                    carteVerif = true;
+                } else {
+                    carteVerif = false;
+                    std::cout << std::endl
+                              << "\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la jouer !"
+                              << std::endl;
+                }
+            }
+
+            j.supprimerCarte(j.getCartes()[choiceCarte - 1]);
+        }
+        j.addTactiquesJouees();
+        return true;
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
     }
+}
 
-    m->getBornes()[choiceBorne-1]->retirerCarte(j, carteChoisie);
+bool Tactique::jouerStratege(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
 
-    m->getBornes()[choiceBorneNew-1]->changerCarte(j, carteChoisie);
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne pour prendre la carte (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 &&
+            manche->getBornes()[choiceBorne - 1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                                   nullptr) {
 
+            unsigned int choiceCarte = 0;
+            std::cout<<std::endl<<"\t3 - Sélectionnez la carte à déplacer (n°) : ";
+            std::cin>>choiceCarte;
+            if(j.getId() == 1){
+                if(manche->getBornes()[choiceBorne - 1]->getCartesJoueur1().size() < choiceCarte || choiceCarte == 0){
+                    std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
+                    return false;
+                }
+            }else{
+                if(manche->getBornes()[choiceBorne - 1]->getCartesJoueur2().size() < choiceCarte || choiceCarte == 0){
+                    std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
+                    return false;
+                }
+            }
+
+            unsigned int choiceEffet = 0;
+            std::cout << std::endl << "\t4 - Que voulez-vous en faire (1 : Jetter, 2 : Déplacer) : ";
+            std::cin >> choiceEffet;
+
+            if(choiceEffet != 1 && choiceEffet != 2){
+                std::cout<<std::endl<<"\t\tErreur - Action inconnue !"<<std::endl;
+                return false;
+            }
+
+            if(choiceEffet == 1){
+                Carte* stratege;
+                for (Carte *card: j.getCartes()) {
+                    if(card->getType() == "Tactique" && card->getNom() == TypeTactique::stratege){
+                        stratege = card;
+                    }
+                }
+                j.supprimerCarte(stratege);
+
+                if(j.getId() == 1){
+                    manche->getBornes()[choiceBorne - 1]->retirerCarte(j, manche->getBornes()[choiceBorne - 1]->getCartesJoueur1()[choiceCarte-1]);
+                }else{
+                    manche->getBornes()[choiceBorne - 1]->retirerCarte(j, manche->getBornes()[choiceBorne - 1]->getCartesJoueur2()[choiceCarte-1]);
+                }
+
+
+            }else{
+                unsigned int choiceBorneDestination = 0;
+
+                std::cout << std::endl << std::endl << "\t5 - Sélectionnez une borne de destination (n°) : ";
+                std::cin >> choiceBorneDestination;
+                if (manche->getBornes().size() >= choiceBorneDestination && choiceBorneDestination != 0 &&
+                    manche->getBornes()[choiceBorneDestination - 1]->estPleine(j) == false && manche->getBornes()[choiceBorneDestination - 1]->getGagnant() ==
+                                                                                   nullptr) {
+                    Carte* stratege;
+                    for (Carte *card: j.getCartes()) {
+                        if(card->getType() == "Tactique" && card->getNom() == TypeTactique::stratege){
+                            stratege = card;
+                        }
+                    }
+                    j.supprimerCarte(stratege);
+
+                    Carte* carteDeplace;
+                    if(j.getId() == 1){
+                        carteDeplace = manche->getBornes()[choiceBorne - 1]->getCartesJoueur1()[choiceCarte-1];
+                        manche->getBornes()[choiceBorne - 1]->retirerCarte(j, carteDeplace);
+                        manche->getBornes()[choiceBorneDestination - 1]->changerCarte(j, carteDeplace);
+                    }else{
+                        carteDeplace = manche->getBornes()[choiceBorne - 1]->getCartesJoueur2()[choiceCarte-1];
+                        manche->getBornes()[choiceBorne - 1]->retirerCarte(j, carteDeplace);
+                        manche->getBornes()[choiceBorneDestination - 1]->changerCarte(j, carteDeplace);
+                    }
+
+                }else{
+                    std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+                    return false;
+                }
+
+            }
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t5 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
+            }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
+        }
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
+    }
+}
+
+bool Tactique::jouerBanshee(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
+
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne pour prendre la carte (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 &&
+            manche->getBornes()[choiceBorne - 1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                           nullptr) {
+
+            unsigned int choiceCarte = 0;
+            std::cout<<std::endl<<"\t3 - Sélectionnez la carte à supprimer (n°) : ";
+            std::cin>>choiceCarte;
+            if(j.getId() == 1){
+                if(manche->getBornes()[choiceBorne - 1]->getCartesJoueur2().size() < choiceCarte || choiceCarte == 0){
+                    std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
+                    return false;
+                }
+            }else{
+                if(manche->getBornes()[choiceBorne - 1]->getCartesJoueur1().size() < choiceCarte || choiceCarte == 0){
+                    std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
+                    return false;
+                }
+            }
+
+                Carte* banshee;
+                for (Carte *card: j.getCartes()) {
+                    if(card->getType() == "Tactique" && card->getNom() == TypeTactique::banshee){
+                        banshee = card;
+                    }
+                }
+                j.supprimerCarte(banshee);
+
+                if(j.getId() == 1){
+                    manche->getBornes()[choiceBorne - 1]->retirerCarte(jeu->getJoueur2(), manche->getBornes()[choiceBorne - 1]->getCartesJoueur2()[choiceCarte-1]);
+                }else{
+                    manche->getBornes()[choiceBorne - 1]->retirerCarte(jeu->getJoueur1(), manche->getBornes()[choiceBorne - 1]->getCartesJoueur1()[choiceCarte-1]);
+                }
+
+
+
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t4 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
+            }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
+        }
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
+    }
+}
+
+bool Tactique::jouerTraitre(Manche* manche, Joueur& j, Jeu* jeu){
+    if((j.getId() == 1 && jeu->getJoueur2().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees()) || (j.getId() == 2 && jeu->getJoueur1().getNbTactiquesJouees()+1 > j.getNbTactiquesJouees())) {
+        unsigned int choiceBorne = 0;
+
+        std::cout << std::endl << std::endl << "\t2 - Sélectionnez une borne pour prendre la carte (n°) : ";
+        std::cin >> choiceBorne;
+        if (manche->getBornes().size() >= choiceBorne && choiceBorne != 0 &&
+            manche->getBornes()[choiceBorne - 1]->estPleine(j) == false && manche->getBornes()[choiceBorne - 1]->getGagnant() ==
+                                                                           nullptr) {
+
+            unsigned int choiceCarte = 0;
+            std::cout<<std::endl<<"\t3 - Sélectionnez la carte à déplacer (n°) : ";
+            std::cin>>choiceCarte;
+            if(j.getId() == 1){
+                if(manche->getBornes()[choiceBorne - 1]->getCartesJoueur2().size() < choiceCarte || choiceCarte == 0){
+                    std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
+                    return false;
+                }
+            }else{
+                if(manche->getBornes()[choiceBorne - 1]->getCartesJoueur1().size() < choiceCarte || choiceCarte == 0){
+                    std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
+                    return false;
+                }
+            }
+
+                unsigned int choiceBorneDestination = 0;
+
+                std::cout << std::endl << std::endl << "\t4 - Sélectionnez une borne de destination (n°) : ";
+                std::cin >> choiceBorneDestination;
+                if (manche->getBornes().size() >= choiceBorneDestination && choiceBorneDestination != 0 &&
+                    manche->getBornes()[choiceBorneDestination - 1]->estPleine(j) == false && manche->getBornes()[choiceBorneDestination - 1]->getGagnant() ==
+                                                                                              nullptr) {
+                    Carte* traitre;
+                    for (Carte *card: j.getCartes()) {
+                        if(card->getType() == "Tactique" && card->getNom() == TypeTactique::traitre){
+                            traitre = card;
+                        }
+                    }
+                    j.supprimerCarte(traitre);
+
+                    Carte* carteDeplace;
+                    if(j.getId() == 1){
+                        carteDeplace = manche->getBornes()[choiceBorne - 1]->getCartesJoueur2()[choiceCarte-1];
+                        manche->getBornes()[choiceBorne - 1]->retirerCarte(jeu->getJoueur2(), carteDeplace);
+                        manche->getBornes()[choiceBorneDestination - 1]->changerCarte(j, carteDeplace);
+                    }else{
+                        carteDeplace = manche->getBornes()[choiceBorne - 1]->getCartesJoueur1()[choiceCarte-1];
+                        manche->getBornes()[choiceBorne - 1]->retirerCarte(jeu->getJoueur1(), carteDeplace);
+                        manche->getBornes()[choiceBorneDestination - 1]->changerCarte(j, carteDeplace);
+                    }
+
+                }else{
+                    std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+                    return false;
+                }
+
+
+
+            if (jeu->getModeDeJeu() == Mode::normal) {
+                manche->getPioche().piocher("Clan", j);
+            } else {
+                int choicePioche = 0;
+                while (choicePioche != 1 && choicePioche != 2) {
+                    std::cout << std::endl << "\t5 - Piocher carte (1 : Clan, 2 : Tactique) : ";
+                    std::cin >> choicePioche;
+                }
+                if (choicePioche == 1) {
+                    manche->getPioche().piocher("Clan", j);
+                } else {
+                    manche->getPioche().piocher("Tactique", j);
+                }
+            }
+
+            j.addTactiquesJouees();
+            return true;
+        } else {
+            std::cout << std::endl << "\t\tErreur - La borne n'existe pas ou est pleine !" << std::endl;
+            return false;
+        }
+    }else{
+        std::cout << std::endl << "\t\tErreur - Vous ne pouvez jouer qu'une carte tactique de plus que l'adversaire !" << std::endl;
+        return false;
+    }
 }

@@ -10,16 +10,16 @@
 std::initializer_list<Couleur> Couleurs = { Couleur::rouge, Couleur::bleu, Couleur::vert, Couleur::violet, Couleur::orange, Couleur::jaune };
 std::initializer_list<Nombre> Nombres = { Nombre::un, Nombre::deux, Nombre::trois, Nombre::quatre, Nombre::cinq, Nombre::six, Nombre::sept, Nombre::huit, Nombre::neuf };
 
-std::unordered_map<TypeTactique, jouerFonction> TypeTactiques = {
-        { TypeTactique::joker, Tactique::jouerJoker },
-        { TypeTactique::espion, Tactique::jouerEspion },
-        { TypeTactique::porteBouclier, Tactique::jouerPorteBouclier },
-        { TypeTactique::colinMaillard, Tactique::jouerColinMaillard },
-        { TypeTactique::combatBoue, Tactique::jouerCombatBoue },
-        { TypeTactique::chasseurTete, Tactique::jouerChasseurTete},
-        { TypeTactique::stratege, Tactique::jouerStratege },
-        { TypeTactique::banshee, Tactique::jouerBanshee },
-        { TypeTactique::traitre, Tactique::jouerTraitre }
+std::unordered_map<TypeTactique, std::pair<jouerFonction, effetFonction>> TypeTactiques = {
+        { TypeTactique::joker, { Tactique::jouerJoker, Tactique::effetJoker } },
+        { TypeTactique::espion, { Tactique::jouerEspion, Tactique::effetEspion } },
+        { TypeTactique::porteBouclier, { Tactique::jouerPorteBouclier, Tactique::effetPorteBouclier } },
+        { TypeTactique::colinMaillard, { Tactique::jouerColinMaillard, Tactique::effetColinMaillard } },
+        { TypeTactique::combatBoue, { Tactique::jouerCombatBoue, Tactique::effetCombatBoue } },
+        { TypeTactique::chasseurTete, { Tactique::jouerChasseurTete, Tactique::effetChasseurTete } },
+        { TypeTactique::stratege, { Tactique::jouerStratege, Tactique::effetStratege } },
+        { TypeTactique::banshee, { Tactique::jouerBanshee, Tactique::effetBanshee } },
+        { TypeTactique::traitre, { Tactique::jouerTraitre, Tactique::effetTraitre } }
 };
 
 
@@ -47,7 +47,7 @@ Manche::Manche(Jeu &jeu) {
 
     if(modeDeJeu == Mode::tactique) {
         for (auto t: TypeTactiques) {
-            cartes.push_back(new Tactique(t.first, t.second));
+            cartes.push_back(new Tactique(t.first, t.second.first, t.second.second));
         }
     }
 

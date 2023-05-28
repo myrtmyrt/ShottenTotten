@@ -86,148 +86,95 @@ void Jeu::jouerManche(){
      * Jouer manche
      */
     while(1){
+
+        /*
+         * Joueur 1 choisir une carte et la jouer
+         */
         afficherJoueur1();
         std::cout<<std::endl<<std::endl<<"\tCartes de "<<_joueur1->getPseudo()<<" : ";
         _joueur1->afficherCartes();
 
         mancheActuelle->afficherBornes();
 
-        unsigned int choiceBorne = 0;
-        bool borneVerif = false;
-
-
-        while(choiceBorne == 0 || borneVerif == false){
-            std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez une borne (n°) : ";
-            std::cin>>choiceBorne;
-            if(mancheActuelle->getBornes().size() >= choiceBorne && choiceBorne != 0 && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) == false){
-                borneVerif = true;
-            }else{
-                borneVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
-            }
-        }
-
         unsigned int choiceCarte = 0;
         bool carteVerif = false;
         while(choiceCarte == 0 || carteVerif == false){
-            std::cout<<std::endl<<"\t2 - Sélectionnez une carte (n°) : ";
+            std::cout<<std::endl<<"\t1 - Sélectionnez une carte (n°) : ";
             std::cin>>choiceCarte;
-            if(_joueur1->getCartes().size() >= choiceCarte && choiceCarte != 0 && (_joueur1->getCartes()[choiceCarte-1]->getType() == "Clan" || (_joueur1->getCartes()[choiceCarte-1]->getType() == "Tactique" && _joueur1->getNbTactiquesJouees() < _joueur2->getNbTactiquesJouees()+1)) ){
-                carteVerif = true;
+            if(_joueur1->getCartes().size() >= choiceCarte && choiceCarte != 0){
+                carteVerif = _joueur1->getCartes()[choiceCarte-1]->jouer(mancheActuelle, *_joueur1, this);
             }else{
                 carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la jouer !"<<std::endl;
+                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
             }
         }
 
-        mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur1, _joueur1->getCartes()[choiceCarte-1]);
+        for (Borne* borne : mancheActuelle->getBornes()) {
+            if(borne->estPleine(*_joueur1) && borne->estPleine(*_joueur2) && borne->getGagnant() == nullptr){
+                if(borne->trouverGagnant(2, *_joueur1, *_joueur2, mancheActuelle) == 1){
+                    borne->setGagnant(_joueur1);
+                }else{
+                    borne->setGagnant(_joueur2);
+                }
 
-        if(_modeDeJeu == Mode::normal){
-            mancheActuelle->getPioche().piocher("Clan", *_joueur1);
-        }else{
-            int choicePioche = 0;
-            while(choicePioche != 1 && choicePioche != 2){
-                std::cout<<std::endl<<"\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
-                std::cin>>choicePioche;
-            }
-            if(choicePioche == 1){
-                mancheActuelle->getPioche().piocher("Clan", *_joueur1);
-            }else{
-                mancheActuelle->getPioche().piocher("Tactique", *_joueur1);
-            }
-        }
-
-
-        if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
-            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(2, *_joueur1, *_joueur2, mancheActuelle) == 1){
-                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
-            }else{
-                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
+                bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
+                if(isGagnant == true){
+                    gagnant = 1;
+                    break;
+                }
+                isGagnant = mancheActuelle->verifGagnant(*_joueur2);
+                if(isGagnant == true){
+                    gagnant = 2;
+                    break;
+                }
             }
 
-            bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
-            if(isGagnant == true){
-                gagnant = 1;
-                break;
-            }
-            isGagnant = mancheActuelle->verifGagnant(*_joueur2);
-            if(isGagnant == true){
-                gagnant = 2;
-                break;
-            }
         }
 
 
 
-
+        /*
+         * Joueur 2 choisir une carte et la jouer
+         */
         afficherJoueur2();
         std::cout<<std::endl<<std::endl<<"\tCartes de "<<_joueur2->getPseudo()<<" : ";
         _joueur2->afficherCartes();
 
         mancheActuelle->afficherBornes();
 
-        choiceBorne = 0;
-        borneVerif = false;
-
-
-        while(choiceBorne == 0 || borneVerif == false){
-            std::cout<<std::endl<<std::endl<<"\t1 - Sélectionnez une borne (n°) : ";
-            std::cin>>choiceBorne;
-            if(mancheActuelle->getBornes().size() >= choiceBorne && choiceBorne != 0 && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2) == false){
-                borneVerif = true;
-            }else{
-                borneVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La borne n'existe pas ou est pleine !"<<std::endl;
-            }
-        }
-
         choiceCarte = 0;
         carteVerif = false;
         while(choiceCarte == 0 || carteVerif == false){
             std::cout<<std::endl<<"\t2 - Sélectionnez une carte (n°) : ";
             std::cin>>choiceCarte;
-            if(_joueur2->getCartes().size() >= choiceCarte && choiceCarte != 0 && (_joueur2->getCartes()[choiceCarte-1]->getType() == "Clan" || (_joueur2->getCartes()[choiceCarte-1]->getType() == "Tactique" && _joueur2->getNbTactiquesJouees() < _joueur1->getNbTactiquesJouees()+1)) ){
-                carteVerif = true;
+            if(_joueur2->getCartes().size() >= choiceCarte && choiceCarte != 0){
+                carteVerif = _joueur2->getCartes()[choiceCarte-1]->jouer(mancheActuelle, *_joueur2, this);
             }else{
                 carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas ou vous n'avez pas le droit de la jouer !"<<std::endl;
+                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
             }
         }
 
-        mancheActuelle->getBornes()[choiceBorne-1]->poserCarte(*_joueur2, _joueur2->getCartes()[choiceCarte-1]);
+        for (Borne* borne : mancheActuelle->getBornes()) {
+            if(borne->estPleine(*_joueur1) && borne->estPleine(*_joueur2) && borne->getGagnant() == nullptr){
+                if(borne->trouverGagnant(2, *_joueur1, *_joueur2, mancheActuelle) == 1){
+                    borne->setGagnant(_joueur1);
+                }else{
+                    borne->setGagnant(_joueur2);
+                }
 
-        if(_modeDeJeu == Mode::normal){
-            mancheActuelle->getPioche().piocher("Clan", *_joueur2);
-        }else{
-            int choicePioche = 0;
-            while(choicePioche != 1 && choicePioche != 2){
-                std::cout<<std::endl<<"\t3 - Piocher carte (1 : Clan, 2 : Tactique) : ";
-                std::cin>>choicePioche;
-            }
-            if(choicePioche == 1){
-                mancheActuelle->getPioche().piocher("Clan", *_joueur2);
-            }else{
-                mancheActuelle->getPioche().piocher("Tactique", *_joueur2);
-            }
-        }
-
-        if(mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur1) && mancheActuelle->getBornes()[choiceBorne-1]->estPleine(*_joueur2)){
-            if(mancheActuelle->getBornes()[choiceBorne-1]->trouverGagnant(1, *_joueur1, *_joueur2, mancheActuelle) == 1){
-                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur1);
-            }else{
-                mancheActuelle->getBornes()[choiceBorne-1]->setGagnant(_joueur2);
+                bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
+                if(isGagnant == true){
+                    gagnant = 1;
+                    break;
+                }
+                isGagnant = mancheActuelle->verifGagnant(*_joueur2);
+                if(isGagnant == true){
+                    gagnant = 2;
+                    break;
+                }
             }
 
-            bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
-            if(isGagnant == true){
-                gagnant = 1;
-                break;
-            }
-            isGagnant = mancheActuelle->verifGagnant(*_joueur2);
-            if(isGagnant == true){
-                gagnant = 2;
-                break;
-            }
         }
 
     }
