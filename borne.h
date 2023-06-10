@@ -11,6 +11,11 @@
 
 #include "carte.h"
 #include "joueur.h"
+#include "pioche.h"
+#include "manche.h"
+
+#include "utils.h"
+
 
 int toInt(Nombre n);
 
@@ -52,6 +57,8 @@ public:
 
     unsigned int trouverGagnant(unsigned int idPremier, Joueur& j1, Joueur& j2, Manche* manche);
     unsigned int calculerPoints(std::vector<Carte*> _cartesJoueur, Joueur& j);
+    bool revendiquer(unsigned int idBorne, Joueur& jrevendique, Joueur& jsecond, Manche* manche, Pioche* pioche);
+    bool trouverGagnantCartes(unsigned int idPremier, Joueur& jrevendique, Joueur& jsecond, std::vector<Carte *> cartesJoueurRevendique, std::vector<Carte *> cartesJoueurAutre, Manche* manche);
 
 };
 

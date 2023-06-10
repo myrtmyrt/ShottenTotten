@@ -12,6 +12,7 @@ std::initializer_list<Nombre> Nombres = { Nombre::un, Nombre::deux, Nombre::troi
 
 std::unordered_map<TypeTactique, std::pair<jouerFonction, effetFonction>> TypeTactiques = {
         { TypeTactique::joker, { Tactique::jouerJoker, Tactique::effetJoker } },
+        { TypeTactique::joker, { Tactique::jouerJoker, Tactique::effetJoker } },
         { TypeTactique::espion, { Tactique::jouerEspion, Tactique::effetEspion } },
         { TypeTactique::porteBouclier, { Tactique::jouerPorteBouclier, Tactique::effetPorteBouclier } },
         { TypeTactique::colinMaillard, { Tactique::jouerColinMaillard, Tactique::effetColinMaillard } },
@@ -65,8 +66,8 @@ Manche::Manche(Jeu &jeu) {
     for (size_t j = 0; j < 7; ++j) {
         if(j == 6){
             if(modeDeJeu == Mode::tactique) {
-                _pioche->piocher("Clan", jeu.getJoueur1());
-                _pioche->piocher("Clan", jeu.getJoueur2());
+                _pioche->piocher("Tactique", jeu.getJoueur1());
+                _pioche->piocher("Tactique", jeu.getJoueur2());
             }
         }else{
             _pioche->piocher("Clan", jeu.getJoueur1());

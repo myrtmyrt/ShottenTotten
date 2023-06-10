@@ -21,6 +21,8 @@ public:
 
     Pioche(std::vector<Carte*> cartes);
 
+    std::vector<Carte*> getCartes() const { return _cartes; }
+
     void piocher(std::string type, Joueur &jou);
 
 };

@@ -4,40 +4,7 @@
 
 #include "jeu.h"
 #include "manche.h"
-
-void afficherJoueur1(){
-    system("clear");
-    std::cout<<"\t       _                               __ "<<std::endl;
-    std::cout<<"\t      | |                             /_ |"<<std::endl;
-    std::cout<<"\t      | | ___  _   _  ___ _   _ _ __   | |"<<std::endl;
-    std::cout<<"\t  _   | |/ _ \\| | | |/ _ \\ | | | '__|  | |"<<std::endl;
-    std::cout<<"\t | |__| | (_) | |_| |  __/ |_| | |     | |"<<std::endl;
-    std::cout<<"\t  \\____/ \\___/ \\__,_|\\___|\\__,_|_|     |_|"<<std::endl;
-    std::cout<<"\t                                          "<<std::endl;
-    std::cout<<"\t------------------------------------------"<<std::endl;
-    std::cout<<"\tAppuyez sur entrer pour continuer : ";
-    fflush(stdout);
-    system("read");
-    system("clear");
-
-}
-
-void afficherJoueur2(){
-    system("clear");
-    std::cout<<"\t       _                               ___  "<<std::endl;
-    std::cout<<"\t      | |                             |__ \\ "<<std::endl;
-    std::cout<<"\t      | | ___  _   _  ___ _   _ _ __     ) |"<<std::endl;
-    std::cout<<"\t  _   | |/ _ \\| | | |/ _ \\ | | | '__|   / / "<<std::endl;
-    std::cout<<"\t | |__| | (_) | |_| |  __/ |_| | |     / /_ "<<std::endl;
-    std::cout<<"\t  \\____/ \\___/ \\__,_|\\___|\\__,_|_|    |____|"<<std::endl;
-    std::cout<<"\t                                          "<<std::endl;
-    std::cout<<"\t--------------------------------------------"<<std::endl;
-    std::cout<<"\tAppuyez sur entrer pour continuer : ";
-    fflush(stdout);
-    system("read");
-    system("clear");
-
-}
+#include "utils.h"
 
 //On initialise le jeu unique à un pointeur null par défaut
 Jeu *Jeu::_jeuUnique = nullptr;
@@ -81,7 +48,7 @@ void Jeu::jouerManche(){
      * Création de manche
      */
     Manche* mancheActuelle = new Manche(*_jeuUnique);
-    unsigned int gagnant = 0;
+
     /*
      * Jouer manche
      */
@@ -93,97 +60,93 @@ void Jeu::jouerManche(){
         afficherJoueur1();
         std::cout<<std::endl<<std::endl<<"\tCartes de "<<_joueur1->getPseudo()<<" : ";
         _joueur1->afficherCartes();
-
         mancheActuelle->afficherBornes();
 
-        unsigned int choiceCarte = 0;
-        bool carteVerif = false;
-        while(choiceCarte == 0 || carteVerif == false){
-            std::cout<<std::endl<<"\t1 - Sélectionnez une carte (n°) : ";
-            std::cin>>choiceCarte;
-            if(_joueur1->getCartes().size() >= choiceCarte && choiceCarte != 0){
-                carteVerif = _joueur1->getCartes()[choiceCarte-1]->jouer(mancheActuelle, *_joueur1, this);
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
-            }
+        bool playedProperly = false;
+        while(!playedProperly) {
+            Carte &cardToPlay = askForCard(_joueur1, mancheActuelle, this);
+            playedProperly = cardToPlay.jouer(mancheActuelle, *_joueur1, this);
         }
 
-        for (Borne* borne : mancheActuelle->getBornes()) {
-            if(borne->estPleine(*_joueur1) && borne->estPleine(*_joueur2) && borne->getGagnant() == nullptr){
-                if(borne->trouverGagnant(2, *_joueur1, *_joueur2, mancheActuelle) == 1){
-                    borne->setGagnant(_joueur1);
-                }else{
-                    borne->setGagnant(_joueur2);
-                }
+        if(_modeDeJeu != Mode::expert) {
+            clearScreen();
+            mancheActuelle->afficherBornes();
+            unsigned int borneId = askForBorneId(*_joueur1, mancheActuelle, this);
+            if(borneId != 0){
+                mancheActuelle->getBornes()[borneId-1]->revendiquer(borneId, *_joueur1, *_joueur2, mancheActuelle, &mancheActuelle->getPioche());
+            }
 
+            for (Borne* borne : mancheActuelle->getBornes()) {
                 bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
-                if(isGagnant == true){
-                    gagnant = 1;
-                    break;
+                if (isGagnant == true) {
+                    clearScreen();
+                    _joueur1->addPoint();
+                    std::cout << std::endl << std::endl << _joueur1->getPseudo() << " A GAGNE LA MANCHE !!!!";
+                    waitForEnter();
+                    return;
                 }
                 isGagnant = mancheActuelle->verifGagnant(*_joueur2);
-                if(isGagnant == true){
-                    gagnant = 2;
+                if (isGagnant == true) {
+                    clearScreen();
+                    _joueur2->addPoint();
+                    std::cout << std::endl << std::endl << _joueur2->getPseudo() << " A GAGNE LA MANCHE !!!!";
+                    waitForEnter();
                     break;
                 }
+
             }
 
         }
+
 
 
 
         /*
          * Joueur 2 choisir une carte et la jouer
          */
-        afficherJoueur2();
-        std::cout<<std::endl<<std::endl<<"\tCartes de "<<_joueur2->getPseudo()<<" : ";
+        if(_joueur2->getIsBot() == false) {
+            afficherJoueur2();
+        }
+        std::cout << std::endl << std::endl << "\tCartes de " << _joueur2->getPseudo() << " : ";
         _joueur2->afficherCartes();
-
         mancheActuelle->afficherBornes();
 
-        choiceCarte = 0;
-        carteVerif = false;
-        while(choiceCarte == 0 || carteVerif == false){
-            std::cout<<std::endl<<"\t2 - Sélectionnez une carte (n°) : ";
-            std::cin>>choiceCarte;
-            if(_joueur2->getCartes().size() >= choiceCarte && choiceCarte != 0){
-                carteVerif = _joueur2->getCartes()[choiceCarte-1]->jouer(mancheActuelle, *_joueur2, this);
-            }else{
-                carteVerif = false;
-                std::cout<<std::endl<<"\t\tErreur - La carte n'existe pas !"<<std::endl;
-            }
+        playedProperly = false;
+        while(!playedProperly) {
+            Carte &cardToPlay = askForCard(_joueur2, mancheActuelle, this);
+            playedProperly = cardToPlay.jouer(mancheActuelle, *_joueur2, this);
         }
 
-        for (Borne* borne : mancheActuelle->getBornes()) {
-            if(borne->estPleine(*_joueur1) && borne->estPleine(*_joueur2) && borne->getGagnant() == nullptr){
-                if(borne->trouverGagnant(2, *_joueur1, *_joueur2, mancheActuelle) == 1){
-                    borne->setGagnant(_joueur1);
-                }else{
-                    borne->setGagnant(_joueur2);
-                }
+        if(_modeDeJeu != Mode::expert) {
+            clearScreen();
+            mancheActuelle->afficherBornes();
+            unsigned int borneId = askForBorneId(*_joueur2, mancheActuelle, this);
+            if(borneId != 0){
+                mancheActuelle->getBornes()[borneId-1]->revendiquer(borneId, *_joueur2, *_joueur1, mancheActuelle, &mancheActuelle->getPioche());
+            }
 
+            for (Borne* borne : mancheActuelle->getBornes()) {
                 bool isGagnant = mancheActuelle->verifGagnant(*_joueur1);
-                if(isGagnant == true){
-                    gagnant = 1;
-                    break;
+                if (isGagnant == true) {
+                    clearScreen();
+                    _joueur1->addPoint();
+                    std::cout << std::endl << std::endl << _joueur1->getPseudo() << " A GAGNE LA MANCHE !!!!";
+                    waitForEnter();
+                    return;
                 }
                 isGagnant = mancheActuelle->verifGagnant(*_joueur2);
-                if(isGagnant == true){
-                    gagnant = 2;
+                if (isGagnant == true) {
+                    clearScreen();
+                    _joueur2->addPoint();
+                    std::cout << std::endl << std::endl << _joueur2->getPseudo() << " A GAGNE LA MANCHE !!!!";
+                    waitForEnter();
                     break;
                 }
+
             }
 
         }
 
     }
-
-    if(gagnant == 1){
-        _joueur1->addPoint();
-    }else{
-        _joueur2->addPoint();
-    }
-
     return;
 }

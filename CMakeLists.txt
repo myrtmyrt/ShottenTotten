@@ -15,4 +15,4 @@ add_executable(LO21_Projet main.cpp
         joueur.h
         joueur.cpp
         pioche.h
-        pioche.cpp)
+        pioche.cpp utils.h utils.cpp)

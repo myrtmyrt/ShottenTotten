@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
 
 #include "carte.h"
 
@@ -38,6 +39,11 @@ public:
 
     void resetTactiquesJouees() { _nbTactiquesJouees = 0; }
     void resetCartes() { _cartes.clear(); }
+
+    unsigned int jouerCarteIA();
+    unsigned int jouerBorneIA(Manche& manche);
+    unsigned int jouerPiocheIA();
+    unsigned int jouerAutreIA(unsigned int min, unsigned int max);
 
 
     Joueur(unsigned int id, bool bot, std::string pseudo) : _id(id), _pseudo(pseudo), _bot(bot), _nbTactiquesJouees(0), _victoires(0){};

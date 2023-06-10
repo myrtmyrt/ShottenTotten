@@ -1,11 +1,12 @@
 #include <iostream>
 #include "jeu.h"
 #include "manche.h"
+#include "utils.h"
 
 using namespace std;
 
 void afficherTitre(){
-    system("clear");
+    clearScreen();
     cout<<endl<<endl<<"\t __      _           _   _               _____      _   _             "<<endl;
     cout<<"\t/ _\\ ___| |__   ___ | |_| |_ ___ _ __   /__   \\___ | |_| |_ ___ _ __  "<<endl;
     cout<<"\t\\ \\ / __| '_ \\ / _ \\| __| __/ _ \\ '_ \\    / /\\/ _ \\| __| __/ _ \\ '_ \\ "<<endl;
@@ -15,23 +16,7 @@ void afficherTitre(){
     cout<<"\t----------------------------------------------------------------------"<<endl;
 }
 
-int main(int argc, char **argv) {
-    Jeu jeu = Jeu::donneInstance("Arman", false, "Myrtille", Mode::tactique, 1);
-    while(jeu.getJoueur1().getVictoires() < jeu.getNbManchesGagnantes() && jeu.getJoueur2().getVictoires() < jeu.getNbManchesGagnantes()){
-        jeu.jouerManche();
-    }
-
-    /*
-     * Affichage du gagnant
-     */
-    if(jeu.getJoueur1().getVictoires() >= jeu.getNbManchesGagnantes()){
-        cout<<jeu.getJoueur1().getPseudo()<<" a gagné le jeu !!!!";
-    }else{
-        cout<<jeu.getJoueur2().getPseudo()<<" a gagné le jeu !!!!";
-    }
-}
-
-int test(int argc, char **argv) {
+int main() {
 
     /*
      * Création des variables nécessaires pour jouer
@@ -56,6 +41,7 @@ int test(int argc, char **argv) {
     int action = -1;
     cout<<"\tChoisissez le programme : ";
     cin>>action;
+    clearCin();
 
     afficherTitre();
     switch (action) {
@@ -74,7 +60,6 @@ int test(int argc, char **argv) {
             break;
         default:
             return 9;
-            break;
     }
 
     /*
@@ -87,7 +72,7 @@ int test(int argc, char **argv) {
     action = -1;
     cout<<"\tChoisissez le programme : ";
     cin>>action;
-
+    clearCin();
 
     switch (action) {
         case 1:
@@ -98,7 +83,6 @@ int test(int argc, char **argv) {
             break;
         default:
             return 9;
-            break;
     }
 
     /*
@@ -107,8 +91,8 @@ int test(int argc, char **argv) {
     afficherTitre();
     cout<<endl<<"\tNombre de manches gagnantes : ";
     cin>>nbManchesGagnantes;
+    clearCin();
 
-    system("clear");
 
     /*
      * Création du jeu
@@ -122,10 +106,27 @@ int test(int argc, char **argv) {
      * Affichage du gagnant
      */
     if(jeu.getJoueur1().getVictoires() >= jeu.getNbManchesGagnantes()){
+        cout<<jeu.getJoueur1().getPseudo()<<" A GAGNE LE JEU !!!!";
+    }else{
+        cout<<jeu.getJoueur2().getPseudo()<<" A GAGNE LE JEU !!!!";
+    }
+
+    return 0;
+}
+
+int startQuick() {
+    Jeu jeu = Jeu::donneInstance("Arman", false, "Myrtille", Mode::tactique, 1);
+    while(jeu.getJoueur1().getVictoires() < jeu.getNbManchesGagnantes() && jeu.getJoueur2().getVictoires() < jeu.getNbManchesGagnantes()){
+        jeu.jouerManche();
+    }
+
+    /*
+     * Affichage du gagnant
+     */
+    if(jeu.getJoueur1().getVictoires() >= jeu.getNbManchesGagnantes()){
         cout<<jeu.getJoueur1().getPseudo()<<" a gagné le jeu !!!!";
     }else{
         cout<<jeu.getJoueur2().getPseudo()<<" a gagné le jeu !!!!";
     }
-
     return 0;
 }

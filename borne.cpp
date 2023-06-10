@@ -4,6 +4,8 @@
 
 #include "borne.h"
 
+using namespace std;
+
 void Borne::poserCarte(Joueur &j, Carte *c) {
     if (j.getId() == 1) {
         if (_cartesJoueur1.size() < _nbCartesMax) {
@@ -295,5 +297,138 @@ int toInt(Nombre n){
         case Nombre::huit: return 8;
         case Nombre::neuf: return 9;
         default: std::cout<<"erreur";
+    }
+}
+
+bool Borne::trouverGagnantCartes(unsigned int idPremier, Joueur& jrevendique, Joueur& jsecond, std::vector<Carte *> cartesJoueurRevendique, std::vector<Carte *> cartesJoueurAutre, Manche* manche){
+    bool estSomme = false;
+
+    for (Carte* card : cartesJoueurRevendique) {
+        if(card->getType() == "Tactique"){
+            if(card->getNom() == TypeTactique::colinMaillard){
+                estSomme = true;
+            }
+            card->effet(jrevendique, this, manche);
+        }
+    }
+
+    for (Carte* card : cartesJoueurAutre) {
+        if(card->getType() == "Tactique"){
+            if(card->getNom() == TypeTactique::colinMaillard){
+                estSomme = true;
+            }
+            card->effet(jsecond, this, manche);
+        }
+    }
+
+    unsigned int pointsJ1 = calculerPoints(cartesJoueurRevendique, jrevendique);
+    unsigned int pointsJ2 = calculerPoints(cartesJoueurAutre, jsecond);
+
+    if(estSomme == true){
+        pointsJ1 = pointsJ1%50;
+        pointsJ2 = pointsJ2%50;
+    }
+
+    if(pointsJ1 > pointsJ2){
+        return false;
+    }else if(pointsJ2 > pointsJ1){
+        return true;
+    }else{
+        if(idPremier == jrevendique.getId()){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+}
+
+bool Borne::revendiquer(unsigned int idBorne, Joueur& jrevendique, Joueur& jsecond, Manche* manche, Pioche* pioche){
+    Borne* borneTarget = manche->getBornes()[idBorne-1];
+    if(borneTarget->getGagnant() == nullptr){
+        if(borneTarget->estPleine(jrevendique) == true){
+            if(borneTarget->estPleine(jsecond) == true){
+                if(jrevendique.getId() == 1){
+                    if(borneTarget->trouverGagnant(jrevendique.getId(), jrevendique, jsecond, manche) == jrevendique.getId()){
+                        borneTarget->setGagnant(&jrevendique);
+                        return true;
+                    }else{
+                        borneTarget->setGagnant(&jsecond);
+                        return false;
+                    }
+                }else{
+                    if(borneTarget->trouverGagnant(jrevendique.getId(), jsecond, jrevendique, manche) == jrevendique.getId()){
+                        borneTarget->setGagnant(&jrevendique);
+                        return true;
+                    }else{
+                        borneTarget->setGagnant(&jsecond);
+                        return false;
+                    }
+                }
+
+            }else{
+                std::vector<Carte *> totalCartes;
+                for (Carte* card : pioche->getCartes()) {
+                    if(card->getType() == "Clan"){
+                        totalCartes.push_back(card);
+                    }
+                }
+                unsigned int taille = 0;
+                for (Carte* card : jsecond.getCartes()) {
+                    if (card->getType() == "Clan") {
+                        totalCartes.push_back(card);
+                        taille++;
+                    } else if(card->getType() == "Tactique") {
+                        switch (card->getNom()) {
+                            case TypeTactique::joker:
+                                taille++;
+                                break;
+                            case TypeTactique::espion:
+                                taille++;
+                                break;
+                            case TypeTactique::porteBouclier:
+                                taille++;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                int nbToAdd = _nbCartesMax-taille;
+                std::vector<std::vector<Carte*>> combinaisons = creerPossibilites(jsecond.getCartes(), totalCartes);
+
+                bool isCombinaisonPossible = false;
+                if(jrevendique.getId() == 1) {
+                    for (std::vector<Carte*> combinaison : combinaisons) {
+                        for (Carte* card : jsecond.getCartes()) {
+                            combinaison.push_back(card);
+                        }
+                        isCombinaisonPossible = borneTarget->trouverGagnantCartes(jrevendique.getId(),jrevendique, jsecond,borneTarget->getCartesJoueur1(), combinaison, manche);
+                        if(isCombinaisonPossible == true) break;
+                    }
+                }else{
+                    for (std::vector<Carte*> combinaison : combinaisons) {
+                        for (Carte* card : jsecond.getCartes()) {
+                            combinaison.push_back(card);
+                        }
+                        isCombinaisonPossible = borneTarget->trouverGagnantCartes(jrevendique.getId(),jrevendique, jsecond,borneTarget->getCartesJoueur2(), combinaison, manche);
+                        if(isCombinaisonPossible == true) break;
+                    }
+                }
+
+                if(isCombinaisonPossible == false){
+                    borneTarget->setGagnant(&jrevendique);
+                }
+                return !isCombinaisonPossible;
+
+            }
+        }else{
+            std::cout<<std::endl<<"\t\tErreur - Vous ne pouvez par revendiquer une borne que vous n'avez pas remplie !"<<std::endl;
+            return false;
+        }
+    }else{
+        std::cout<<std::endl<<"\t\tErreur - La borne est déjà gagnée !"<<std::endl;
+        return false;
     }
 }

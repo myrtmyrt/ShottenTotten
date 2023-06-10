@@ -8,7 +8,7 @@
 #include <iostream>
 #include "joueur.h"
 
-enum class Mode { normal, tactique };
+enum class Mode { normal, tactique, expert };
 
 void afficherJoueur1();
 void afficherJoueur2();

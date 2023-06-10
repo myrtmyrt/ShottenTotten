@@ -15,7 +15,7 @@ void Pioche::piocher(std::string type, Joueur &jou) {
             cartesTypes.push_back(card);
         }
     }
-    srand (time(NULL));
+    srand(time(NULL)*200);
     size_t random = rand() % cartesTypes.size();
 
     Carte* carte = cartesTypes[random];
